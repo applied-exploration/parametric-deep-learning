@@ -6,7 +6,7 @@ def calculate_label_loss(estimated_program_values, actual_values):
     return (estimated_program_values - actual_values) ** 2
 
 
-def calculate_synthesis_loss(est_values, input_points):
+def calculate_symbolic_loss(est_values, input_points):
     definition = "CIRCLE {}\nTRANSLATION {} {}".format(est_values[0], est_values[1], est_values[2])
     est_program = parse_program(definition)
     x, y, r = run_program(est_program)
