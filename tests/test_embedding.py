@@ -15,7 +15,7 @@ class TestEmbeddingMethods(unittest.TestCase):
         print("Testing normalization.")
         normalized_values = normalize_to_range(input_values)
         difference = np.sum(np.subtract(normalized_values, baseline_values))
-        assert -0.0001 <= difference <= 0.0001, "Normalized values should be the same, it was {}".format(normalized_values)
+        assert -0.0001 <= difference <= 0.0001, "Normalized values should be the same, it was {} rather than {}".format(normalized_values, baseline_values)
     
 if __name__ == '__main__':
     unittest.main()
