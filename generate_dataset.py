@@ -5,24 +5,19 @@ import random
 import matplotlib.pyplot as plt
     
 
-
-def write_csv(path, file):
-    with open(path, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(file)
             
-def random_circle_point(radius):
+def random_circle_point(radius:float)->tuple[float, float]:
     angle = random.random()*math.pi*2
     x = math.cos(angle)*radius
     y = math.sin(angle)*radius
     return x, y
 
-def translation(x, y, random_translation_x, random_translation_y):
+def translation(x:float, y:float, random_translation_x:float, random_translation_y:float)->tuple[float, float]:
     translated_x = x+random_translation_x
     translated_y = y+random_translation_y
     return translated_x, translated_y
 
-def generate_dataset(canvas_size, max_radius, num_sample_points, num_circles, display_plot=False):
+def generate_dataset(canvas_size:int, max_radius:int, num_sample_points:int, num_circles:int, display_plot:bool=False):
     column_names = ["features", "label"]
 
     df = pd.DataFrame(columns=column_names)
@@ -50,7 +45,6 @@ def generate_dataset(canvas_size, max_radius, num_sample_points, num_circles, di
         ## Plot for reality check
         if display_plot:
             zipped = list(zip(*plain_samples))
-            fig, ax = plt.subplots()
             plt.gca().set_aspect('equal')
             plt.scatter(zipped[0], zipped[1])
             plt.xlim(-canvas_size/2,canvas_size)
@@ -60,10 +54,10 @@ def generate_dataset(canvas_size, max_radius, num_sample_points, num_circles, di
     df.to_csv('data/dataset.csv', index=True)
 
 if __name__ == '__main__':
-    canvas_size = 100
-    max_radius = 20
-    num_sample_points = 100
-    num_circles = 500
+    canvas_size:int = 100
+    max_radius:int = 20
+    num_sample_points:int = 100
+    num_circles:int = 500
 
     generate_dataset(canvas_size, max_radius, num_sample_points, num_circles, display_plot=False)   
         
