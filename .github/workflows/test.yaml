@@ -9,7 +9,7 @@ jobs:
         with:
           auto-update-conda: false
           activate-environment: quant
-          environment-file: environment.yml
+          environment-file: environment.yaml
           python-version: 3.9
       - uses: iterative/setup-cml@v1
       - name: Run pytest
