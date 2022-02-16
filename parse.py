@@ -28,7 +28,7 @@ def parse_program(input: str) -> list[Instruction]:
 
 
 def parse_points(input: str) -> list[Point]:
-    return [tuple(map(int, line.split(' '))) for line in input.splitlines()]
+    return [tuple(map(float, line.split(' '))) for line in input.splitlines()]
 
 program = parse_program('CIRCLE 2.1\nTRANSLATION 1.2 3.4')
 print(program)
