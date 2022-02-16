@@ -1,0 +1,17 @@
+name: cad
+channels:
+  - johnsnowlabs
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - ipykernel
+  - ca-certificates
+  - openssl
+  - matplotlib
+  - pandas
+  - numpy
+  - pytorch
+  - pytest
+  - certifi
+prefix: /usr/local/anaconda3/envs/cad
