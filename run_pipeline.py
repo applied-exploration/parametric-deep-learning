@@ -10,3 +10,8 @@ def run_pipeline():
                 loss_function = F.mse_loss), 
             max_epochs=15
         )
+    
+    new_model.fit(X, y)
+    
+if __name__ == "__main__":
+    run_pipeline()
