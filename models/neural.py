@@ -16,5 +16,5 @@ class LightningNeuralNetModel(Model):
         self.model.initialize_network(X[0].shape[0], y[0].shape[0])
         self.trainer.fit(self.model, dataloader)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: list[torch.Tensor]) -> np.ndarray:
         return self.model(X)
