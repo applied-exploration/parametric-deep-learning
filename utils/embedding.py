@@ -1,7 +1,7 @@
-from parse import Instruction
+from utils.parse import Instruction
 import numpy as np
 import torch
-from parse import Circle, Translation, Point
+from utils.types import Circle, Translation, Point
 from generate_dataset import DataConfig
 from .quantize import quantize
 

@@ -1,21 +1,4 @@
-#%%
-from dataclasses import dataclass
-from typing import Union
-
-
-@dataclass
-class Circle:
-    r: float
-
-
-@dataclass
-class Translation:
-    x: float
-    y: float
-
-
-Instruction = Union[Circle, Translation]
-Point = tuple[float, float]
+from utils.types import Instruction, Circle, Point, Translation
 
 
 def parse_program(input: str) -> list[Instruction]:
@@ -37,10 +20,8 @@ def parse_points(input: str) -> list[Point]:
     return [tuple(map(float, line.split(" "))) for line in input.splitlines()]
 
 
-program = parse_program("CIRCLE 2.1\nTRANSLATION 1.2 3.4")
-print(program)
+# program = parse_program("CIRCLE 2.1\nTRANSLATION 1.2 3.4")
+# print(program)
 
-points = parse_points("1 2\n3 4\n5 6\n7 8")
-print(points)
-
-# %%
+# points = parse_points("1 2\n3 4\n5 6\n7 8")
+# print(points)

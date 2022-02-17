@@ -1,5 +1,5 @@
 # import torch
-from parse import parse_program, parse_points
+from utils.parse import parse_program, parse_points
 import numpy as np
 import math
 from typing import Tuple, List

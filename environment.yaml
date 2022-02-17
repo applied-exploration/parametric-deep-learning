@@ -1,8 +1,8 @@
 name: cad
 channels:
-  - johnsnowlabs
   - conda-forge
   - defaults
+  - cadquery
 dependencies:
   - python=3.9
   - ipykernel
@@ -12,6 +12,8 @@ dependencies:
   - pandas
   - numpy
   - pytorch
+  - pytorch-lightning
   - pytest
   - certifi
+  - tqdm
 prefix: /usr/local/anaconda3/envs/cad
