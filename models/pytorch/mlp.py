@@ -6,8 +6,14 @@ import pytorch_lightning as pl
 import math
 import numpy as np
 
+
 class MultiLayerPerceptron(pl.LightningModule):
-    def __init__(self, hidden_layers_ratio: list[float] = [2.0, 2.0], probabilities: bool = False, loss_function=F.mse_loss):
+    def __init__(
+        self,
+        hidden_layers_ratio: list[float] = [2.0, 2.0],
+        probabilities: bool = False,
+        loss_function=F.mse_loss,
+    ):
         super().__init__()
         self.hidden_layers_ratio = hidden_layers_ratio
         self.probabilities = probabilities
@@ -42,8 +48,7 @@ class MultiLayerPerceptron(pl.LightningModule):
         # It is independent of forward
         x, y = batch
         x = x.view(x.size(0), -1)
-        
-        
+
         loss = 0
         for layer in self.layers:
             x = layer(x.float())
