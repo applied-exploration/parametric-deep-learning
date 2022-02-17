@@ -15,4 +15,5 @@ dependencies:
   - pytorch-lightning
   - pytest
   - certifi
+  - tqdm
 prefix: /usr/local/anaconda3/envs/cad

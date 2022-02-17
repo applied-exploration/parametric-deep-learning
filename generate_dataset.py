@@ -3,6 +3,8 @@ import math
 import random
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
+from tqdm import tqdm
+import numpy as np
 
 
 @dataclass
@@ -31,9 +33,8 @@ def translation(
 def generate_dataset(config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
 
-    df = pd.DataFrame(columns=column_names)
-
-    for i in range(config.num_circles):
+    data = []
+    for _ in tqdm(range(config.num_circles)):
         random_samples = []
         plain_samples = []
 
@@ -62,11 +63,8 @@ def generate_dataset(config: DataConfig, display_plot: bool = False):
                 "TRANSLATION {} {}".format(random_translation_x, random_translation_y),
             ]
         )
-        one_data_point = pd.Series(
-            dict(zip(column_names, [features_collapsed, labels_collapsed]))
-        )
-        df = df.append(one_data_point, ignore_index=True)
 
+        data.append([features_collapsed, labels_collapsed])
         ## Plot for reality check
         if display_plot:
             zipped = list(zip(*plain_samples))
@@ -76,6 +74,7 @@ def generate_dataset(config: DataConfig, display_plot: bool = False):
             plt.ylim(-config.canvas_size / 2, config.canvas_size)
             plt.show()
 
+    df = pd.DataFrame(data, columns=column_names)
     df.to_csv("data/dataset.csv", index=True)
 
 
