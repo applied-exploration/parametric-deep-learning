@@ -1,13 +1,12 @@
 from __future__ import annotations
 from models.base import Model
 import numpy as np
-import copy
 import pytorch_lightning as pl
 
 
 class LightningNeuralNetModel(Model):
 
-    """ Standard lightning methods """
+    """Standard lightning methods"""
 
     def __init__(self, model, max_epochs=5):
         self.model = model
@@ -18,6 +17,5 @@ class LightningNeuralNetModel(Model):
         self.model.initialize_network(X.shape[1], y.shape[1])
         self.trainer.fit(self.model, train_dataloader)
 
-    def predict(self, X: np.ndarray) -> tuple[float, np.ndarray]:
+    def predict(self, X: np.ndarray) -> np.ndarray:
         return self.model(X)
-
