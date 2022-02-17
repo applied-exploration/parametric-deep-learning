@@ -8,4 +8,4 @@ def embed_and_normalize_points(
     dataconfig: DataConfig, points: list[Point]
 ) -> torch.Tensor:
     normalized = normalize_to_canvas(points, dataconfig)
-    return torch.Tensor(normalized)
+    return torch.flatten(torch.Tensor(normalized))

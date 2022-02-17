@@ -12,8 +12,14 @@ def embed_instructions(
     The first two dimensions are one-hot encoded versions of the type.
     The last dimensions are embedded parameters (padded if not present).
     """
-    return torch.stack(
-        [__embed_instruction(dataconfig, instruction) for instruction in instructions], dim = 0
+    return torch.flatten(
+        torch.stack(
+            [
+                __embed_instruction(dataconfig, instruction)
+                for instruction in instructions
+            ],
+            dim=0,
+        )
     )
 
 
