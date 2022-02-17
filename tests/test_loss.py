@@ -1,5 +1,5 @@
 from utils.loss import calculate_label_loss, calculate_symbolic_loss
-from parse import parse_program
+from utils.parse import parse_program
 
 example_program_good = (
     "CIRCLE 1.3790708713968214\nTRANSLATION -24.86442070352715 8.947517177527358"
