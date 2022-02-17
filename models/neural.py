@@ -2,20 +2,19 @@ from __future__ import annotations
 from models.base import Model
 import numpy as np
 import pytorch_lightning as pl
+from .pytorch.dataset import get_dataloader
+import torch
 
 
 class LightningNeuralNetModel(Model):
-
-    """Standard lightning methods"""
-
     def __init__(self, model, max_epochs=5):
         self.model = model
         self.trainer = pl.Trainer(max_epochs=max_epochs)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
-        train_dataloader = self.__prepare_data(X.astype(float), y.astype(float))
-        self.model.initialize_network(X.shape[1], y.shape[1])
-        self.trainer.fit(self.model, train_dataloader)
+    def fit(self, X: list[torch.Tensor], y: list[torch.Tensor]) -> None:
+        dataloader = get_dataloader(X, y)
+        self.model.initialize_network(X[0].shape[0], y[0].shape[0])
+        self.trainer.fit(self.model, dataloader)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         return self.model(X)

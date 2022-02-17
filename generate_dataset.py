@@ -77,10 +77,9 @@ def generate_dataset(config: DataConfig, display_plot: bool = False):
     df = pd.DataFrame(data, columns=column_names)
     df.to_csv("data/dataset.csv", index=True)
 
+dataconfig = DataConfig(
+    canvas_size=100, max_radius=20, num_sample_points=100, num_circles=500
+)
 
 if __name__ == "__main__":
-    dataconfig = DataConfig(
-        canvas_size=100, max_radius=20, num_sample_points=100, num_circles=500
-    )
-
     generate_dataset(dataconfig, display_plot=False)
