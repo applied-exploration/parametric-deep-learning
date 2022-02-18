@@ -37,7 +37,7 @@ def __embed_instruction(
         radius = quantize(
             torch.Tensor([instruction.r / dataconfig.max_radius]), quantize_bins
         )
-        return torch.Tensor([0.0, instruction.r, padding])
+        return torch.Tensor([0.0, radius, padding])
     elif isinstance(instruction, Translation):
         x = quantize(
             torch.Tensor([instruction.x / dataconfig.canvas_size]), quantize_bins
@@ -52,15 +52,15 @@ def __embed_instruction(
 
 def from_embeddings_to_instructions(
     embeddings: torch.Tensor, dataconfig: DataConfig
-) -> list[Instruction]:
-    assert embeddings.shape[0] % 3 == 0
-    no_of_instructions = int(embeddings.shape[0] / 3)
+) -> list[list[Instruction]]:
+    assert embeddings.shape[1] % 3 == 0
+    no_of_instructions = int(embeddings.shape[1] / 3)
     embeddings = embeddings.cpu().detach().numpy()
 
     def single_embedding_to_instruction(embedding: np.ndarray) -> Instruction:
         if embedding[0] < 0.5:
             return Circle(embedding[1] * dataconfig.max_radius)
-        elif embedding[0] == 1.0:
+        elif embedding[0] > 0.5:
             return Translation(
                 embedding[1] * dataconfig.canvas_size,
                 embedding[2] * dataconfig.canvas_size,
@@ -69,5 +69,9 @@ def from_embeddings_to_instructions(
             raise Exception(f"Unknown instruction: {embedding}")
 
     return [
-        single_embedding_to_instruction(e) for e in embeddings.split(no_of_instructions)
+        [
+            single_embedding_to_instruction(e)
+            for e in np.array_split(row, no_of_instructions)
+        ]
+        for row in embeddings
     ]

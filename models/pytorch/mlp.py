@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader, random_split
 import pytorch_lightning as pl
 import math
 import numpy as np
+import torch
 
 
 class MultiLayerPerceptron(pl.LightningModule):
@@ -32,16 +33,17 @@ class MultiLayerPerceptron(pl.LightningModule):
 
         self.layers.append(nn.Linear(current_dim, output_dim))
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: list[torch.Tensor]):
         # in lightning, forward defines the prediction/inference actions
-        x = torch.from_numpy(x).float()
+        x = torch.stack(x, dim=0)
+
         for layer in self.layers:
             x = layer(x)
 
         if self.probabilities:
             x = F.softmax(x, dim=1)
 
-        return (x.item(), np.array([]))
+        return x
 
     def training_step(self, batch: torch.Tensor, batch_idx):
         # training_step defined the train loop.

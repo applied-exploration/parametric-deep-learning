@@ -2,31 +2,45 @@ from models.neural import LightningNeuralNetModel
 from models.pytorch.mlp import MultiLayerPerceptron
 from data.data_loader import load_data
 import torch.nn.functional as F
-from embedding import embed_and_normalize_points, embed_instructions
+from embedding import (
+    embed_and_normalize_points,
+    embed_instructions,
+    from_embeddings_to_instructions,
+)
 from utils.parse import parse_points, parse_program
 from generate_dataset import dataconfig
+from utils.scoring import score_instructions
 
 
 def run_pipeline():
 
-    X, y = load_data()
+    X_train, y_train, X_test, y_test = load_data()
 
-    X = [parse_points(row) for row in X]
-    y = [parse_program(row) for row in y]
+    X_train = [
+        embed_and_normalize_points(dataconfig, parse_points(row)) for row in X_train
+    ]
+    y_train = [embed_instructions(dataconfig, parse_program(row)) for row in y_train]
 
-    X = [embed_and_normalize_points(dataconfig, row) for row in X]
-    y = [embed_instructions(dataconfig, row) for row in y]
+    X_test = [
+        embed_and_normalize_points(dataconfig, parse_points(row)) for row in X_test
+    ]
+    y_test = [parse_program(row) for row in y_test]
 
-    new_model = LightningNeuralNetModel(
+    model = LightningNeuralNetModel(
         MultiLayerPerceptron(
             hidden_layers_ratio=[1.0],
             probabilities=False,
             loss_function=F.mse_loss,
         ),
-        max_epochs=15,
+        max_epochs=50,
     )
 
-    new_model.fit(X, y)
+    model.fit(X_train, y_train)
+    output = model.predict(X_test)
+    output_instructions = from_embeddings_to_instructions(output, dataconfig)
+
+    score = score_instructions(output_instructions, y_test)
+    print(f"Score: {score}")
 
 
 if __name__ == "__main__":
