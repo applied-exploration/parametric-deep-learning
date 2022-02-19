@@ -28,7 +28,6 @@ def write_definition(primitives:list[Circle], instructions:list[Union[Translate,
     primitive_str = "".join(["{} {} {} {}\n".format(primitive.name, *primitive.get_params()) for primitive in primitives])
     instructions_str = "".join(["{} {} {} {} {}\n".format(instruction.name, *instruction.get_params()) for instruction in instructions])
         
-    
     labels_collapsed = "".join(
         [
             primitive_str,
@@ -52,7 +51,7 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
         instructions = [
             Translate(*random_translation(config), index = 0), 
             Translate(*random_translation(config), index = 1),
-            Constrain(x =3, y=0, indexes=(0, 1))
+            Constrain(x = 25, y=0, indexes=(0, 1))
         ]
         
         """ 1. Apply instructions """

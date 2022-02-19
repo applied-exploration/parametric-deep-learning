@@ -73,8 +73,8 @@ class Constrain:
         difference_vector = np.array(obj_b.get_position()) - np.array(obj_a.get_position())
         move_vector = difference_vector - constrain_vector
         
-        x = obj_b.position[0] + move_vector[0]
-        y = obj_b.position[1] + move_vector[0]
+        x = obj_b.position[0] - move_vector[0]
+        y = obj_b.position[1] - move_vector[1]
         
         obj_b = Circle(obj_b.r, (x, y))
         obj_a = Circle(obj_a.r, obj_a.get_position())
