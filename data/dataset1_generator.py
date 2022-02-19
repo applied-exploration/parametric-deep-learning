@@ -65,9 +65,10 @@ def generate_dataset1(config: DataConfig, display_plot: bool = False):
 if __name__ == "__main__":
     dataconfig = DataConfig(
         canvas_size=100,
+        dataset_size=5,
         min_radius=10,
         max_radius=20,
         num_sample_points=100,
-        num_circles=500,
+        num_circles=1,
     )
     generate_dataset1(dataconfig, display_plot=False)

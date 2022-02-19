@@ -8,6 +8,7 @@ class DataConfig:
     min_radius: int
     max_radius: int
     num_sample_points: int
+    dataset_size: int
     num_circles: int
 
 
