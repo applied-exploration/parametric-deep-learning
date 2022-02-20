@@ -1,5 +1,5 @@
 from functools import reduce
-from .types import Instruction
+from data.types import Instruction
 import numpy as np
 
 
@@ -16,7 +16,7 @@ def score_instructions(
         return min_score
 
     def get_params(instructions: list[Instruction]) -> list[list[float]]:
-        return [instruction.get_parameters() for instruction in instructions]
+        return [instruction.get_params() for instruction in instructions]
 
     y_params = [get_params(row) for row in y]
     pred_params = [get_params(row) for row in pred]

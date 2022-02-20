@@ -1,6 +1,5 @@
 import torch
-from utils.types import Point
-from generate_dataset import DataConfig
+from data.types import Point, DataConfig
 from utils.embedding import normalize_to_canvas
 
 

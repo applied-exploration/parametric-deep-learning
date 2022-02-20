@@ -1,27 +1,23 @@
-from utils.types import Instruction, Circle, Point, Translation
+from data.types import Instruction, Circle, Point, Translate, Constraint
 
 
 def parse_program(input: str) -> list[Instruction]:
     def parse_line(line: str) -> Instruction:
+        parameters = line.split(" ")
         if line.startswith("CIRCLE"):
-            return Circle(float(line.split(" ")[1]))
+            return Circle(float(parameters[1]), float(parameters[2]), float(parameters[3]))
         elif line.startswith("TRANSLATION"):
-            return Translation(float(line.split(" ")[1]), float(line.split(" ")[2]))
+            return Translate(float(parameters[1]), float(parameters[2]), int(parameters[3]))
+        elif line.startswith("CONSTRAINT"):
+            return Constraint(float(parameters[1]), float(parameters[2]), (int(parameters[3]), int(parameters[4])))
         else:
             raise Exception(f"Unknown instruction: {line}")
 
     return [parse_line(line) for line in input.splitlines()]
 
 
-instruction_set = {"CIRCLE": Circle, "TRANSLATION": Translation}
+instruction_set = {"CIRCLE": Circle, "TRANSLATION": Translate, "CONSTRAINT": Constraint}
 
 
 def parse_points(input: str) -> list[Point]:
     return [tuple(map(float, line.split(" "))) for line in input.splitlines()]
-
-
-# program = parse_program("CIRCLE 2.1\nTRANSLATION 1.2 3.4")
-# print(program)
-
-# points = parse_points("1 2\n3 4\n5 6\n7 8")
-# print(points)

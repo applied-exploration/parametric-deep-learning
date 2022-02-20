@@ -1,16 +1,5 @@
-from dataclasses import dataclass
 import matplotlib.pyplot as plt
-
-
-@dataclass
-class DataConfig:
-    canvas_size: int
-    min_radius: int
-    max_radius: int
-    num_sample_points: int
-    dataset_size: int
-    num_circles: int
-
+from .types import DataConfig
 
 def display_circles(circles: list, config: DataConfig) -> None:
 

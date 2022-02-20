@@ -1,5 +1,5 @@
 import numpy as np
-from utils.types import Point
+from data.types import Point
 from generate_dataset import DataConfig
 
 
