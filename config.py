@@ -7,5 +7,5 @@ dataconfig = DataConfig(
     max_radius=20,
     num_sample_points=100,
     num_circles=2,
-    instruction_embeddding_size=7
+    instruction_embeddding_size=7,
 )

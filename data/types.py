@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import numpy as np
 from abc import ABC
 
+
 @dataclass
 class DataConfig:
     canvas_size: int
@@ -15,10 +16,11 @@ class DataConfig:
     num_circles: int
     instruction_embeddding_size: int
 
+
 Point = tuple[float, float]
 
-class Instruction(ABC):
 
+class Instruction(ABC):
     def get_random_point(self) -> tuple[float, float]:
         raise NotImplementedError()
 
@@ -41,11 +43,10 @@ class Circle(Instruction):
         return (x, y)
 
     def get_params(self) -> tuple[float, float, float, float]:
-        return (self.r, self.x, self.y, 0.)
+        return (self.r, self.x, self.y, 0.0)
 
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
-        
 
 
 @dataclass(frozen=True)
@@ -74,7 +75,7 @@ class Translate(Instruction):
         return new_primitives
 
     def get_params(self) -> tuple[float, float, float, float]:
-        return (self.x, self.y, self.index, 0.)
+        return (self.x, self.y, self.index, 0.0)
 
 
 @dataclass(frozen=True)

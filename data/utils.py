@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from .types import DataConfig
 
+
 def display_circles(circles: list, config: DataConfig) -> None:
 
     plt.xlim(-config.canvas_size / 2, config.canvas_size)

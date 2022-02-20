@@ -69,16 +69,23 @@ def from_embeddings_to_instructions(
     embeddings: torch.Tensor, dataconfig: DataConfig
 ) -> list[list[Instruction]]:
     assert embeddings.shape[1] % dataconfig.instruction_embeddding_size == 0
-    no_of_instructions = int(embeddings.shape[1] / dataconfig.instruction_embeddding_size)
+    no_of_instructions = int(
+        embeddings.shape[1] / dataconfig.instruction_embeddding_size
+    )
     embeddings = embeddings.cpu().detach().numpy()
 
     def single_embedding_to_instruction(embedding: np.ndarray) -> Instruction:
+        def softmax(x: np.ndarray) -> np.ndarray:
+            return np.exp(x) / np.sum(np.exp(x))
 
-        def softmax(x: np.ndarray) -> np.ndarray: return np.exp(x) / np.sum(np.exp(x))
         instruction_type = np.argmax(softmax(embedding[:3]))
 
         if instruction_type == 0:
-            return Circle(r=embedding[3] * dataconfig.max_radius, x=embedding[4] * dataconfig.canvas_size, y=embedding[5] * dataconfig.canvas_size)
+            return Circle(
+                r=embedding[3] * dataconfig.max_radius,
+                x=embedding[4] * dataconfig.canvas_size,
+                y=embedding[5] * dataconfig.canvas_size,
+            )
         elif instruction_type == 1:
             return Translate(
                 x=embedding[3] * dataconfig.canvas_size,

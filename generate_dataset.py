@@ -3,6 +3,7 @@ from data.dataset2_generator import generate_dataset2
 from data.types import DataConfig
 from config import dataconfig
 
+
 def generate_dataset(data_config: DataConfig, display_plot: bool, type: str) -> None:
 
     if type == "dataset1":

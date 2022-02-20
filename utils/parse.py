@@ -5,11 +5,19 @@ def parse_program(input: str) -> list[Instruction]:
     def parse_line(line: str) -> Instruction:
         parameters = line.split(" ")
         if line.startswith("CIRCLE"):
-            return Circle(float(parameters[1]), float(parameters[2]), float(parameters[3]))
+            return Circle(
+                float(parameters[1]), float(parameters[2]), float(parameters[3])
+            )
         elif line.startswith("TRANSLATION"):
-            return Translate(float(parameters[1]), float(parameters[2]), int(parameters[3]))
+            return Translate(
+                float(parameters[1]), float(parameters[2]), int(parameters[3])
+            )
         elif line.startswith("CONSTRAINT"):
-            return Constraint(float(parameters[1]), float(parameters[2]), (int(parameters[3]), int(parameters[4])))
+            return Constraint(
+                float(parameters[1]),
+                float(parameters[2]),
+                (int(parameters[3]), int(parameters[4])),
+            )
         else:
             raise Exception(f"Unknown instruction: {line}")
 
