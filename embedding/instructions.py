@@ -28,8 +28,12 @@ def __embed_instruction(
     dataconfig: DataConfig, instruction: Instruction
 ) -> torch.Tensor:
     """Embed an instruction into a tensor.
-    The first three dimensions are one-hot encoded versions of the type.
-    The next three dimensions are quantized continuous parameters (padded if not present).
+    1. The first three dimensions are one-hot encoded versions of the type.
+    2. The next three dimensions are quantized continuous parameters (padded if not present).
+    3. The (2 * max_definition_len) dimensions are indicies of nodes (parameters to constraint) one-hot encoded.
+
+    [0,0,1,  0.1,0.2,0.3,  0,0,0,0,0,0,0,0,0,1 0,0,0,0,0,0,0,0,1,0]
+       1.         2.                        3.
     """
     quantize_bins = 128
     parameter_padding = torch.Tensor([0.0])
@@ -111,30 +115,47 @@ def from_embeddings_to_instructions(
     embeddings = embeddings.cpu().detach().numpy()
 
     def single_embedding_to_instruction(
-        embedding: np.ndarray, no_of_instruction_types: int
+        embedding: np.ndarray, no_of_instruction_types: int, dataconfig: DataConfig
     ) -> Instruction:
         instruction_type = from_onehot(embedding[no_of_instructions])
         parameters_start_from = no_of_instruction_types
 
         if instruction_type == 0:
             return Circle(
-                r=embedding[parameters_start_from] * dataconfig.max_radius,
-                x=embedding[parameters_start_from + 1] * dataconfig.canvas_size,
-                y=embedding[parameters_start_from + 2] * dataconfig.canvas_size,
+                x=embedding[parameters_start_from] * dataconfig.canvas_size,
+                y=embedding[parameters_start_from + 1] * dataconfig.canvas_size,
+                r=embedding[parameters_start_from + 2] * dataconfig.max_radius,
             )
         elif instruction_type == 1:
             return Translate(
                 x=embedding[parameters_start_from] * dataconfig.canvas_size,
                 y=embedding[parameters_start_from + 1] * dataconfig.canvas_size,
-                index=int(embedding[parameters_start_from + 2]),
+                index=from_onehot(
+                    embedding[
+                        parameters_start_from + 3,
+                        parameters_start_from + 3 + dataconfig.max_definition_len,
+                    ]
+                ),
             )
         elif instruction_type == 2:
+            indicies_start_from = parameters_start_from + 3
             return Constraint(
                 embedding[parameters_start_from] * dataconfig.canvas_size,
                 embedding[parameters_start_from + 1] * dataconfig.canvas_size,
                 (
-                    int(embedding[parameters_start_from + 2]),
-                    int(embedding[parameters_start_from + 3]),
+                    from_onehot(
+                        embedding[
+                            indicies_start_from : indicies_start_from
+                            + dataconfig.max_definition_len,
+                        ]
+                    ),
+                    from_onehot(
+                        embedding[
+                            indicies_start_from
+                            + dataconfig.max_definition_len : indicies_start_from
+                            + (dataconfig.max_definition_len * 2),
+                        ]
+                    ),
                 ),
             )
         else:
@@ -142,7 +163,7 @@ def from_embeddings_to_instructions(
 
     return [
         [
-            single_embedding_to_instruction(e, len(all_instructions))
+            single_embedding_to_instruction(e, len(all_instructions), dataconfig)
             for e in np.array_split(row, no_of_instructions)
         ]
         for row in embeddings

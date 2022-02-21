@@ -1,15 +1,15 @@
-from utils.embedding import normalize_to_range, normalize_to_unit_vector
 import numpy as np
+from config import dataconfig
+from data.types import Circle, Translate, Constraint
+from embedding import embed_instructions
 
-input_values = [0.0, 12.0, 24.0, 48.0]
-baseline_values = [0.0, 0.25, 0.5, 1.0]
+instructions = [
+    Circle(0.1, 1.2, 2.2),
+    Translate(0.2, 0.3, index=3),
+    Translate(0.4, 0.6, index=4),
+    Constraint(x=25, y=0, indicies=(0, 1)),
+]
 
-
-def test_point_normalization() -> None:
-    normalized_values = normalize_to_range(input_values)
-    difference = np.sum(np.subtract(normalized_values, baseline_values))
-    assert (
-        -0.0001 <= difference <= 0.0001
-    ), "Normalized values should be the same, it was {} rather than {}".format(
-        normalized_values, baseline_values
-    )
+def test_embeddings():
+    embedded = embed_instructions(dataconfig, instructions)
+    assert all([x == y for x, y in zip(embedded, instructions)])
