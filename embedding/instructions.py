@@ -6,6 +6,12 @@ from utils.quantize import quantize
 import numpy as np
 
 
+#  circle  |      param0       |      param1      |      param2       |     param3        |
+# [ 0 1 0 ] [ 0 0 0 1 0 0 1 1 ] [0 0 0 0 1 0 0 1 ] [ 0 0 1 0 0 0 1 1 ] [ 1 0 0 0 0 0 0 0 ]
+#  transla |      param0       |      param1      |      param2       |     param3        |
+# [ 0 0 1 ] [ 0 0 0 1 0 0 1 1 ] [0 0 0 0 1 0 0 1 ] [ 0 0 1 0 0 0 1 1 ] [ 1 0 0 0 0 0 0 0 ]
+
+
 def embed_instructions(
     dataconfig: DataConfig, instructions: list[Instruction]
 ) -> torch.Tensor:
@@ -68,9 +74,9 @@ def __embed_instruction(
 def from_embeddings_to_instructions(
     embeddings: torch.Tensor, dataconfig: DataConfig
 ) -> list[list[Instruction]]:
-    assert embeddings.shape[1] % dataconfig.instruction_embeddding_size == 0
+    assert embeddings.shape[1] % dataconfig.instruction_embedding_size == 0
     no_of_instructions = int(
-        embeddings.shape[1] / dataconfig.instruction_embeddding_size
+        embeddings.shape[1] / dataconfig.instruction_embedding_size
     )
     embeddings = embeddings.cpu().detach().numpy()
 
