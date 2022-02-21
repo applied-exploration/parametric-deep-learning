@@ -15,6 +15,7 @@ class DataConfig:
     dataset_size: int
     num_circles: int
     instruction_embedding_size: int
+    max_definition_len: int
 
 
 Point = tuple[float, float]
@@ -112,3 +113,6 @@ class Constraint(Instruction):
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.x, self.y, self.indicies[0], self.indicies[1])
+
+
+all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
