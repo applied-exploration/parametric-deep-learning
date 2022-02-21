@@ -2,8 +2,8 @@ import numpy as np
 import torch
 
 
-def quantize(input: torch.Tensor, n=256) -> torch.Tensor:
-    return input.round().clip(min=0, max=n - 1)
+def quantize(input: float, n: int) -> torch.Tensor:
+    return torch.Tensor([input]).round() / n
 
 
 def to_onehot(x: int, n_classes: int) -> torch.Tensor:

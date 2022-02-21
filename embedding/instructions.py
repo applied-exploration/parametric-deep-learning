@@ -35,22 +35,16 @@ def __embed_instruction(
     [0,0,1,  0.1,0.2,0.3,  0,0,0,0,0,0,0,0,0,1 0,0,0,0,0,0,0,0,1,0]
        1.         2.                        3.
     """
-    quantize_bins = 128
+    quantize_bins = 100
     parameter_padding = torch.Tensor([0.0])
     index_padding = torch.Tensor([0.0] * dataconfig.max_definition_len)
     instruction_type = to_onehot(
         all_instructions[type(instruction)], len(all_instructions)
     )
     if isinstance(instruction, Circle):
-        radius = quantize(
-            torch.Tensor([instruction.r / dataconfig.max_radius]), quantize_bins
-        )
-        x = quantize(
-            torch.Tensor([instruction.x / dataconfig.canvas_size]), quantize_bins
-        )
-        y = quantize(
-            torch.Tensor([instruction.y / dataconfig.canvas_size]), quantize_bins
-        )
+        radius = quantize(instruction.r, dataconfig.max_radius)
+        x = quantize(instruction.x, dataconfig.canvas_size)
+        y = quantize(instruction.y, dataconfig.canvas_size)
         return torch.cat(
             [
                 instruction_type,
@@ -63,12 +57,8 @@ def __embed_instruction(
             dim=0,
         )
     elif isinstance(instruction, Translate):
-        x = quantize(
-            torch.Tensor([instruction.x / dataconfig.canvas_size]), quantize_bins
-        )
-        y = quantize(
-            torch.Tensor([instruction.y / dataconfig.canvas_size]), quantize_bins
-        )
+        x = quantize(instruction.x, dataconfig.canvas_size)
+        y = quantize(instruction.y, dataconfig.canvas_size)
         return torch.cat(
             [
                 instruction_type,
@@ -82,12 +72,8 @@ def __embed_instruction(
         )
 
     elif isinstance(instruction, Constraint):
-        x = quantize(
-            torch.Tensor([instruction.x / dataconfig.canvas_size]), quantize_bins
-        )
-        y = quantize(
-            torch.Tensor([instruction.y / dataconfig.canvas_size]), quantize_bins
-        )
+        x = quantize(instruction.x, dataconfig.canvas_size)
+        y = quantize(instruction.y, dataconfig.canvas_size)
         index1, index2 = instruction.indicies
         return torch.cat(
             [
@@ -117,7 +103,7 @@ def from_embeddings_to_instructions(
     def single_embedding_to_instruction(
         embedding: np.ndarray, no_of_instruction_types: int, dataconfig: DataConfig
     ) -> Instruction:
-        instruction_type = from_onehot(embedding[no_of_instructions])
+        instruction_type = from_onehot(embedding[:no_of_instruction_types])
         parameters_start_from = no_of_instruction_types
 
         if instruction_type == 0:
@@ -132,8 +118,10 @@ def from_embeddings_to_instructions(
                 y=embedding[parameters_start_from + 1] * dataconfig.canvas_size,
                 index=from_onehot(
                     embedding[
-                        parameters_start_from + 3,
-                        parameters_start_from + 3 + dataconfig.max_definition_len,
+                        parameters_start_from
+                        + 3 : parameters_start_from
+                        + 3
+                        + dataconfig.max_definition_len,
                     ]
                 ),
             )
