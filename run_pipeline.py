@@ -8,7 +8,7 @@ from embedding import (
     from_embeddings_to_instructions,
 )
 from utils.parse import parse_points, parse_program
-from generate_dataset import dataconfig
+from config import dataconfig
 from utils.scoring import score_instructions
 
 

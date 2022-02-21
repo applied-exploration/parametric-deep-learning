@@ -1,6 +1,7 @@
 from data.dataset1_generator import generate_dataset1
 from data.dataset2_generator import generate_dataset2
-from data.data_utils import DataConfig
+from data.types import DataConfig
+from config import dataconfig
 
 
 def generate_dataset(data_config: DataConfig, display_plot: bool, type: str) -> None:
@@ -13,12 +14,4 @@ def generate_dataset(data_config: DataConfig, display_plot: bool, type: str) -> 
 
 
 if __name__ == "__main__":
-    dataconfig = DataConfig(
-        canvas_size=100,
-        dataset_size=3,
-        min_radius=5,
-        max_radius=20,
-        num_sample_points=100,
-        num_circles=2,
-    )
     generate_dataset(data_config=dataconfig, display_plot=True, type="dataset2")

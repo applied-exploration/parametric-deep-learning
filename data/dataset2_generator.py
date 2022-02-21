@@ -1,12 +1,10 @@
 import pandas as pd
-import math
 import random
 
-from dataclasses import dataclass
 from tqdm import tqdm
 import numpy as np
-from data.components import Circle, Translate, Constrain
-from data.data_utils import DataConfig, display_circles
+from .types import Circle, Translate, Constraint
+from .utils import DataConfig, display_circles
 from typing import Union
 
 
@@ -24,8 +22,8 @@ def random_translation(config: DataConfig) -> tuple[float, float]:
 
 
 def render(
-    primitives: list[Circle], instructions: list[Union[Translate, Constrain]]
-) -> tuple[list[Circle], list[Union[Translate, Constrain]]]:
+    primitives: list[Circle], instructions: list[Union[Translate, Constraint]]
+) -> tuple[list[Circle], list[Union[Translate, Constraint]]]:
     for instruction in instructions:
         primitives = instruction.apply(primitives)
 
@@ -33,7 +31,7 @@ def render(
 
 
 def write_definition(
-    primitives: list[Circle], instructions: list[Union[Translate, Constrain]]
+    primitives: list[Circle], instructions: list[Union[Translate, Constraint]]
 ) -> str:
     primitive_str = "".join(
         [
@@ -63,13 +61,13 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
         plain_samples = []
 
         primitives = [
-            Circle(random_radius(config), random_translation(config))
+            Circle(random_radius(config), *random_translation(config))
             for _ in range(config.num_circles)
         ]
         instructions = [
             Translate(*random_translation(config), index=0),
             Translate(*random_translation(config), index=1),
-            Constrain(x=25, y=0, indexes=(0, 1)),
+            Constraint(x=25, y=0, indicies=(0, 1)),
         ]
 
         """ 1. Apply instructions """
@@ -107,5 +105,6 @@ if __name__ == "__main__":
         max_radius=20,
         num_sample_points=100,
         num_circles=1,
+        instruction_embedding_size=7
     )
     generate_dataset2(dataconfig, display_plot=False)

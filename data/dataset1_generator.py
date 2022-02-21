@@ -1,12 +1,9 @@
 import pandas as pd
-import math
 import random
-
-from dataclasses import dataclass
 from tqdm import tqdm
-import numpy as np
-from data.components import Circle, Translate
-from data.data_utils import DataConfig, display_circles
+
+from data.types import Circle, Translate, DataConfig
+from data.utils import display_circles
 
 
 def generate_dataset1(config: DataConfig, display_plot: bool = False):
