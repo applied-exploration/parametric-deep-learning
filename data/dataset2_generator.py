@@ -61,7 +61,7 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
         plain_samples = []
 
         primitives = [
-            Circle(random_radius(config), random_translation(config))
+            Circle(random_radius(config), *random_translation(config))
             for _ in range(config.num_circles)
         ]
         instructions = [
@@ -105,5 +105,6 @@ if __name__ == "__main__":
         max_radius=20,
         num_sample_points=100,
         num_circles=1,
+        instruction_embedding_size=7
     )
     generate_dataset2(dataconfig, display_plot=False)

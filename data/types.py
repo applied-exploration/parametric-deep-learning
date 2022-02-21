@@ -14,7 +14,7 @@ class DataConfig:
     num_sample_points: int
     dataset_size: int
     num_circles: int
-    instruction_embeddding_size: int
+    instruction_embedding_size: int
 
 
 Point = tuple[float, float]

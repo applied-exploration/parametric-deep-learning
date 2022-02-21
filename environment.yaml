@@ -16,4 +16,6 @@ dependencies:
   - pytest
   - certifi
   - tqdm
+  # - pip:
+  #   - pre-commit
 prefix: /usr/local/anaconda3/envs/cad

@@ -14,5 +14,4 @@ def generate_dataset(data_config: DataConfig, display_plot: bool, type: str) -> 
 
 
 if __name__ == "__main__":
-
     generate_dataset(data_config=dataconfig, display_plot=True, type="dataset2")
