@@ -141,4 +141,5 @@ class Constraint(Instruction):
             and math.isclose(self.y, __o.y, abs_tol=0.1)
         )
 
+
 all_instructions = {Circle: 0, Translate: 1, Constraint: 2}

@@ -105,6 +105,6 @@ if __name__ == "__main__":
         max_radius=20,
         num_sample_points=100,
         num_circles=1,
-        instruction_embedding_size=7
+        instruction_embedding_size=7,
     )
     generate_dataset2(dataconfig, display_plot=False)
