@@ -21,7 +21,7 @@ class ProgramSynthesisTask:
 
 dataconfig = DataConfig(
     canvas_size=100,
-    dataset_size=3,
+    dataset_size=1000,
     min_radius=5,
     max_radius=20,
     num_sample_points=100,

@@ -25,10 +25,11 @@ task = ProgramSynthesisTask(
     model=LightningNeuralNetModel(
         MultiLayerPerceptron(
             hidden_layers_ratio=[1.0, 2.0, 1.0, 0.5],
+            dropout_ratio=0.1,
             probabilities=False,
             loss_function=F.mse_loss,
         ),
-        max_epochs=50,
+        max_epochs=250,
     ),
     visualize=visualize(dataconfig),
 )
@@ -42,7 +43,6 @@ def run_pipeline(task: ProgramSynthesisTask):
     y_train = [task.embed_program(task.parse_program(row)) for row in y_train]
     X_test_without_embedding = [task.parse_input(row) for row in X_test]
     X_test = [task.embed_input(row) for row in X_test_without_embedding]
-
     y_test = [task.parse_program(row) for row in y_test]
 
     task.model.fit(X_train, y_train)
