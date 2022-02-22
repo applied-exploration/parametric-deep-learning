@@ -2,7 +2,7 @@
 from utils.parse import parse_program, parse_points
 import numpy as np
 import math
-from typing import Tuple, List
+from typing import Tuple
 
 
 def calculate_label_loss(estimated_program_values: list, actual_values: list) -> float:
@@ -26,7 +26,3 @@ def run_program(program: list) -> Tuple[float, float, float]:
     x, y = program[1].x, program[1].y
 
     return x, y, r
-
-
-if __name__ == "__main__":
-    run_test()
