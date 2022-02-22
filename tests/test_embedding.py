@@ -12,6 +12,6 @@ instructions = [
 
 
 def test_embeddings():
-    embedded = embed_instructions(dataconfig, instructions).unsqueeze(dim=0)
-    embedded_reversed = from_embeddings_to_instructions(embedded, dataconfig)[0]
+    embedded = embed_instructions(dataconfig)(instructions).unsqueeze(dim=0)
+    embedded_reversed = from_embeddings_to_instructions(dataconfig)(embedded)[0]
     assert all([x == y for x, y in zip(embedded_reversed, instructions)])
