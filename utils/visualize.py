@@ -1,9 +1,9 @@
-from turtle import fillcolor
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
 from data.types import DataConfig
 import numpy as np
+from typing import Union
 
 
 def display_features(objects: list, config: DataConfig) -> None:
@@ -42,7 +42,7 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
 
 
 def display_both(
-    objects: list[list[float]], rendered_primitives: list, config: DataConfig
+    objects: list, rendered_primitives: list, config: DataConfig
 ) -> None:
     fig, axes = plt.subplots(ncols=2)
     for ax in axes:

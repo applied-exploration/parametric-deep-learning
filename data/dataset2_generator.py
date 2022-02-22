@@ -5,6 +5,7 @@ from tqdm import tqdm
 import numpy as np
 from data.types import Circle, Translate, Constraint, DataConfig
 from utils.visualize import display_features, display_program, display_both
+from utils.render import render
 from typing import Union
 
 
@@ -19,15 +20,6 @@ def random_translation(config: DataConfig) -> tuple[float, float]:
         random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
         random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
     )
-
-
-def render(
-    primitives: list[Circle], instructions: list[Union[Translate, Constraint]]
-) -> tuple[list[Circle], list[Union[Translate, Constraint]]]:
-    for instruction in instructions:
-        primitives = instruction.apply(primitives)
-
-    return primitives, instructions
 
 
 def write_definition(

@@ -6,14 +6,17 @@ from embedding import (
     embed_and_normalize_points,
     embed_instructions,
     from_embeddings_to_instructions,
+    instructions,
 )
 from utils.parse import parse_points, parse_program
 from config import dataconfig
 from utils.scoring import score_instructions
-from utils.visualiz
+from utils.visualize import display_features, display_program, display_both
+from utils.render import render
+from data.types import Circle, Translate, Constraint, DataConfig
 
 
-def run_pipeline():
+def run_pipeline(display_plot: bool = False):
 
     X_train, y_train, X_test, y_test = load_data()
 
@@ -43,6 +46,26 @@ def run_pipeline():
     score = score_instructions(output_instructions, y_test)
     print(f"Score: {score}")
 
+    if display_plot:
+        num_to_display = min(15, len(X_train))
+        all_primitives = []
+        for output_instruction in output_instructions[:num_to_display]:
+            primitives, instructions = [], []
+            for node in output_instruction:
+                if type(node) == Circle:
+                    primitives.append(node)
+                else:
+                    instructions.append(node)
+
+            primitives, _ = render(primitives, instructions)
+            all_primitives.append(primitives)
+
+        display_both(
+            X_train[:num_to_display],
+            all_primitives,
+            dataconfig,
+        )
+
 
 if __name__ == "__main__":
-    run_pipeline()
+    run_pipeline(display_plot=True)
