@@ -15,6 +15,7 @@ class DataConfig:
     dataset_size: int
     num_circles: int
     instruction_embedding_size: int
+    max_definition_len: int
 
 
 Point = tuple[float, float]
@@ -48,6 +49,15 @@ class Circle(Instruction):
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
 
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, Circle):
+            return False
+        return (
+            math.isclose(self.r, __o.r, abs_tol=0.1)
+            and math.isclose(self.x, __o.x, abs_tol=0.1)
+            and math.isclose(self.y, __o.y, abs_tol=0.1)
+        )
+
 
 @dataclass(frozen=True)
 class Translate(Instruction):
@@ -76,6 +86,15 @@ class Translate(Instruction):
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.x, self.y, self.index, 0.0)
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, Translate):
+            return False
+        return (
+            self.index == __o.index
+            and math.isclose(self.x, __o.x, abs_tol=0.1)
+            and math.isclose(self.y, __o.y, abs_tol=0.1)
+        )
 
 
 @dataclass(frozen=True)
@@ -112,3 +131,15 @@ class Constraint(Instruction):
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.x, self.y, self.indicies[0], self.indicies[1])
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, Constraint):
+            return False
+        return (
+            self.indicies == __o.indicies
+            and math.isclose(self.x, __o.x, abs_tol=0.1)
+            and math.isclose(self.y, __o.y, abs_tol=0.1)
+        )
+
+
+all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
