@@ -10,6 +10,7 @@ from embedding import (
 from utils.parse import parse_points, parse_program
 from config import dataconfig
 from utils.scoring import score_instructions
+from utils.visualiz
 
 
 def run_pipeline():

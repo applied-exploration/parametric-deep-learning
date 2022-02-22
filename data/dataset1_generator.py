@@ -3,7 +3,7 @@ import random
 from tqdm import tqdm
 
 from data.types import Circle, Translate, DataConfig
-from data.utils import display_circles
+from utils.visualize import display_features
 
 
 def generate_dataset1(config: DataConfig, display_plot: bool = False):

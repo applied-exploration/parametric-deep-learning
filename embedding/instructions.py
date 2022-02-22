@@ -6,12 +6,6 @@ from utils.quantize import quantize
 import numpy as np
 
 
-#  circle  |      param0       |      param1      |      param2       |     param3        |
-# [ 0 1 0 ] [ 0 0 0 1 0 0 1 1 ] [0 0 0 0 1 0 0 1 ] [ 0 0 1 0 0 0 1 1 ] [ 1 0 0 0 0 0 0 0 ]
-#  transla |      param0       |      param1      |      param2       |     param3        |
-# [ 0 0 1 ] [ 0 0 0 1 0 0 1 1 ] [0 0 0 0 1 0 0 1 ] [ 0 0 1 0 0 0 1 1 ] [ 1 0 0 0 0 0 0 0 ]
-
-
 def embed_instructions(
     dataconfig: DataConfig, instructions: list[Instruction]
 ) -> torch.Tensor:
