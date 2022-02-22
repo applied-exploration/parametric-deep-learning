@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
+
 from data.types import DataConfig
 from models.types import Model
 
@@ -15,6 +16,7 @@ class ProgramSynthesisTask:
     embedding_to_program: Callable
     scorer: Callable
     model: Model
+    visualize: Optional[Callable]
 
 
 dataconfig = DataConfig(

@@ -4,6 +4,7 @@ import random
 from dataclasses import dataclass
 import numpy as np
 from abc import ABC
+from typing import Union
 
 
 @dataclass
@@ -143,3 +144,7 @@ class Constraint(Instruction):
 
 
 all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
+
+Primitives = list[Circle]
+Modifiers = list[Union[Translate, Constraint]]
+Program = list[Instruction]

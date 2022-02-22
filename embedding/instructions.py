@@ -1,7 +1,7 @@
 from grpc import Call
 from utils.parse import Instruction
 import torch
-from data.types import Circle, Constraint, Translate, all_instructions
+from data.types import Circle, Constraint, Program, Translate, all_instructions
 from generate_dataset import DataConfig
 from .utils import quantize, from_onehot, to_onehot
 import numpy as np
@@ -10,7 +10,7 @@ from typing import Callable
 
 
 def embed_instructions(dataconfig: DataConfig) -> Callable:
-    def _embed_instructions(instructions: list[Instruction]) -> torch.Tensor:
+    def _embed_instructions(instructions: Program) -> torch.Tensor:
         """Embed an instruction into a tensor.
         The first two dimensions are one-hot encoded versions of the type.
         The last dimensions are embedded parameters (padded if not present).
