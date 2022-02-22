@@ -8,6 +8,7 @@ import numpy as np
 from typing import Callable
 
 
+
 def embed_instructions(dataconfig: DataConfig) -> Callable:
     def _embed_instructions(instructions: list[Instruction]) -> torch.Tensor:
         """Embed an instruction into a tensor.

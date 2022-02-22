@@ -3,8 +3,9 @@ import random
 
 from tqdm import tqdm
 import numpy as np
-from .types import Circle, Translate, Constraint
-from .utils import DataConfig, display_circles
+from data.types import Circle, Translate, Constraint, DataConfig
+from utils.visualize import display_features, display_program, display_both
+from utils.render import render
 from typing import Union
 
 
@@ -19,15 +20,6 @@ def random_translation(config: DataConfig) -> tuple[float, float]:
         random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
         random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
     )
-
-
-def render(
-    primitives: list[Circle], instructions: list[Union[Translate, Constraint]]
-) -> tuple[list[Circle], list[Union[Translate, Constraint]]]:
-    for instruction in instructions:
-        primitives = instruction.apply(primitives)
-
-    return primitives, instructions
 
 
 def write_definition(
@@ -54,7 +46,8 @@ def write_definition(
 def generate_dataset2(config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
     data = []
-    all_circles = []
+    all_features = []
+    all_programs = []
 
     for _ in tqdm(range(config.dataset_size)):
         random_samples = []
@@ -64,6 +57,7 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
             Circle(random_radius(config), *random_translation(config))
             for _ in range(config.num_circles)
         ]
+
         instructions = [
             Translate(*random_translation(config), index=0),
             Translate(*random_translation(config), index=1),
@@ -72,6 +66,8 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
 
         """ 1. Apply instructions """
         primitives, instructions = render(primitives, instructions)
+        if display_plot:
+            all_programs.append(primitives)
 
         """ 2. Sample operations """
         for _ in range(config.num_sample_points):
@@ -82,16 +78,17 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
                 if display_plot:
                     plain_samples.extend([(x, y)])
 
-        all_circles.append(plain_samples)
+        all_features.append(plain_samples)
         features_collapsed = "".join(random_samples)
         labels_collapsed = write_definition(primitives, instructions)
 
         data.append([features_collapsed, labels_collapsed])
 
     if display_plot:
-        display_circles(
-            all_circles[: min(15, len(all_circles))], config
-        )  ## Plot for reality check
+        num_to_display = min(15, len(all_features))
+        display_both(
+            all_features[:num_to_display], all_programs[:num_to_display], config
+        )
 
     df = pd.DataFrame(data, columns=column_names)
     df.to_csv("data/dataset.csv", index=True)
