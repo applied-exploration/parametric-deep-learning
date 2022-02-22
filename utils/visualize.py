@@ -41,12 +41,9 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
     plt.show()
 
 
-def display_both(
-    objects: list, rendered_primitives: list, config: DataConfig
-) -> None:
+def display_both(objects: list, rendered_primitives: list, config: DataConfig) -> None:
     fig, axes = plt.subplots(ncols=2)
     for ax in axes:
-        ax.plot([1, 2, 3], [1, 2, 3])
         ax.set(adjustable="box", aspect="equal")
         ax.set_xlim(-config.canvas_size / 2, config.canvas_size)
         ax.set_ylim(-config.canvas_size / 2, config.canvas_size)
@@ -61,7 +58,9 @@ def display_both(
         for primitive in primitive_collection:
             axes[1].add_patch(
                 mpatches.Circle(
-                    (primitive.x, primitive.y), primitive.r, edgecolor=cmap[i],
+                    (primitive.x, primitive.y),
+                    primitive.r,
+                    edgecolor=cmap[i],
                     facecolor=(0.0, 0.0, 0.0, 0.0),
                 ),
             )

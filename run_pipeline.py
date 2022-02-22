@@ -25,6 +25,7 @@ def run_pipeline(display_plot: bool = False):
     ]
     y_train = [embed_instructions(dataconfig, parse_program(row)) for row in y_train]
 
+    input_features_saved = [parse_points(row) for row in X_test]
     X_test = [
         embed_and_normalize_points(dataconfig, parse_points(row)) for row in X_test
     ]
@@ -36,7 +37,7 @@ def run_pipeline(display_plot: bool = False):
             probabilities=False,
             loss_function=F.mse_loss,
         ),
-        max_epochs=50,
+        max_epochs=150,
     )
 
     model.fit(X_train, y_train)
@@ -47,9 +48,8 @@ def run_pipeline(display_plot: bool = False):
     print(f"Score: {score}")
 
     if display_plot:
-        num_to_display = min(15, len(X_train))
-        all_primitives = []
-        for output_instruction in output_instructions[:num_to_display]:
+        output_primitives = []
+        for output_instruction in output_instructions:
             primitives, instructions = [], []
             for node in output_instruction:
                 if type(node) == Circle:
@@ -58,11 +58,11 @@ def run_pipeline(display_plot: bool = False):
                     instructions.append(node)
 
             primitives, _ = render(primitives, instructions)
-            all_primitives.append(primitives)
+            output_primitives.append(primitives)
 
         display_both(
-            X_train[:num_to_display],
-            all_primitives,
+            input_features_saved,
+            output_primitives,
             dataconfig,
         )
 
