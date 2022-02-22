@@ -1,5 +1,5 @@
 from __future__ import annotations
-from models.base import Model
+from models.types import Model
 import numpy as np
 import pytorch_lightning as pl
 from .pytorch.dataset import get_dataloader
