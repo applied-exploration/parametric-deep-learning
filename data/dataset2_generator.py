@@ -91,16 +91,3 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
 
     df = pd.DataFrame(data, columns=column_names)
     df.to_csv("data/dataset.csv", index=True)
-
-
-if __name__ == "__main__":
-    dataconfig = DataConfig(
-        canvas_size=100,
-        dataset_size=5,
-        min_radius=10,
-        max_radius=20,
-        num_sample_points=100,
-        num_circles=1,
-        instruction_embedding_size=7,
-    )
-    generate_dataset2(dataconfig, display_plot=False)
