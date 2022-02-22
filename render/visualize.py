@@ -1,21 +1,16 @@
-from data.types import DataConfig, Program
+from data.types import DataConfig, Program, Point
 from .utils import display_both
 from typing import Callable
 from .render import render
 
 
 def visualize(dataconfig: DataConfig) -> Callable:
-    def __visualize(
-        ground_truth_programs: list[Program], predicted_programs: list[Program]
-    ):
+    def __visualize(x: list[list[Point]], y: list[Program]):
 
-        ground_truth_program = ground_truth_programs[0]
-        predicted_program = predicted_programs[0]
-
-        primitives, _ = render(predicted_program)
+        primitives, _ = render(y[0])
 
         display_both(
-            ground_truth_program,
+            x[0],
             primitives,
             dataconfig,
         )

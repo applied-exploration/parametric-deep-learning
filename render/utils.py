@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
-from data.types import DataConfig
+from data.types import DataConfig, Primitives, Point
 import numpy as np
 from typing import Union
 
@@ -41,7 +41,9 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
     plt.show()
 
 
-def display_both(objects: list, rendered_primitives: list, config: DataConfig) -> None:
+def display_both(
+    points: list[Point], rendered_primitives: Primitives, config: DataConfig
+) -> None:
     fig, axes = plt.subplots(ncols=2)
     for ax in axes:
         ax.set(adjustable="box", aspect="equal")
@@ -50,20 +52,18 @@ def display_both(objects: list, rendered_primitives: list, config: DataConfig) -
 
     cmap = plt.cm.get_cmap(plt.cm.viridis, 143).colors
 
-    for i, object in enumerate(objects):
-        zipped = list(zip(*object))
-        axes[0].scatter(zipped[0], zipped[1])
+    for i, point in enumerate(points):
+        axes[0].scatter(point[0], point[1])
 
-    for i, primitive_collection in enumerate(rendered_primitives):
-        for primitive in primitive_collection:
-            axes[1].add_patch(
-                mpatches.Circle(
-                    (primitive.x, primitive.y),
-                    primitive.r,
-                    edgecolor=cmap[i],
-                    facecolor=(0.0, 0.0, 0.0, 0.0),
-                ),
-            )
+    for i, primitive in enumerate(rendered_primitives):
+        axes[1].add_patch(
+            mpatches.Circle(
+                (primitive.x, primitive.y),
+                primitive.r,
+                edgecolor=cmap[i],
+                facecolor=(0.0, 0.0, 0.0, 0.0),
+            ),
+        )
 
     # fig, axs = plt.subplots(ncols=2)
     # plt.xlim(-config.canvas_size / 2, config.canvas_size)

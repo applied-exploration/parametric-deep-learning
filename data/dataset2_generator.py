@@ -84,9 +84,8 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
         data.append([features_collapsed, labels_collapsed])
 
     if display_plot:
-        num_to_display = min(15, len(all_features))
         display_both(
-            all_features[:num_to_display], all_programs[:num_to_display], config
+            all_features[0], all_programs[0], config
         )
 
     df = pd.DataFrame(data, columns=column_names)

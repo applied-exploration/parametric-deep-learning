@@ -24,7 +24,7 @@ task = ProgramSynthesisTask(
     scorer=score_programs,
     model=LightningNeuralNetModel(
         MultiLayerPerceptron(
-            hidden_layers_ratio=[1.0],
+            hidden_layers_ratio=[1.0, 2.0, 1.0, 0.5],
             probabilities=False,
             loss_function=F.mse_loss,
         ),
@@ -40,7 +40,9 @@ def run_pipeline(task: ProgramSynthesisTask):
 
     X_train = [task.embed_input(task.parse_input(row)) for row in X_train]
     y_train = [task.embed_program(task.parse_program(row)) for row in y_train]
-    X_test = [task.embed_input(task.parse_input(row)) for row in X_test]
+    X_test_without_embedding = [task.parse_input(row) for row in X_test]
+    X_test = [task.embed_input(row) for row in X_test_without_embedding]
+
     y_test = [task.parse_program(row) for row in y_test]
 
     task.model.fit(X_train, y_train)
@@ -50,7 +52,7 @@ def run_pipeline(task: ProgramSynthesisTask):
     score = score_programs(y_test, output_programs)
     print(f"Score: {score}")
     if task.visualize is not None:
-        task.visualize(y_test, output_programs)
+        task.visualize(X_test_without_embedding, output_programs)
 
 
 if __name__ == "__main__":
