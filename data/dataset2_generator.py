@@ -3,7 +3,16 @@ import random
 
 from tqdm import tqdm
 import numpy as np
-from data.types import Circle, Modifiers, Primitives, Translate, Constraint, DataConfig
+from data.types import (
+    Circle,
+    Modifiers,
+    Primitives,
+    Translate,
+    Constraint,
+    DataConfig,
+    Program,
+    Instruction,
+)
 from render.utils import display_features, display_program, display_both
 from render.render import render
 from typing import Union
@@ -64,7 +73,8 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
         ]
 
         """ 1. Apply modifiers """
-        primitives, modifiers = render(primitives + modifiers)
+        instructions: list[Instruction] = [*primitives, *modifiers]
+        primitives, modifiers = render(instructions)
         if display_plot:
             all_programs.append(primitives)
 
