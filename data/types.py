@@ -23,13 +23,20 @@ Point = tuple[float, float]
 
 
 class Instruction(ABC):
-    name:str
+    name: str
+
     def get_params(self) -> tuple[float, float, float, float]:
+        raise NotImplementedError()
+
+    def get_params_dict(self) -> dict:
         raise NotImplementedError()
 
 
 class Primitive(Instruction):
     def get_random_point(self) -> tuple[float, float]:
+        raise NotImplementedError()
+
+    def get_position(self) -> tuple[float, float]:
         raise NotImplementedError()
 
 
@@ -55,6 +62,9 @@ class Circle(Primitive):
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.r, self.x, self.y, 0.0)
 
+    def get_params_dict(self) -> dict:
+        return {"r": self.r, "x": self.x, "y": self.y}
+
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
 
@@ -69,6 +79,11 @@ class Circle(Primitive):
 
 
 @dataclass(frozen=True)
+class DummyPrimitive(Primitive):
+    pass
+
+
+@dataclass(frozen=True)
 class Translate(Modifier):
     x: float
     y: float
@@ -77,8 +92,8 @@ class Translate(Modifier):
 
     def apply(
         self,
-        primitives: list[Circle],
-    ) -> list[Circle]:
+        primitives: list[Primitive],
+    ) -> list[Primitive]:
         assert self.index < len(primitives), "This primitve does not exist"
 
         obj = primitives[self.index]
@@ -86,7 +101,10 @@ class Translate(Modifier):
         x = obj_pos[0] + self.x
         y = obj_pos[1] + self.y
 
-        new_obj = Circle(obj.r, x, y)
+        new_params = obj.get_params_dict()
+        new_params["x"] = x
+        new_params["y"] = y
+        new_obj = type(obj)(**new_params)  # type: ignore
 
         new_primitives = primitives.copy()
         new_primitives[self.index] = new_obj
@@ -106,6 +124,47 @@ class Translate(Modifier):
         )
 
 
+# @dataclass(frozen=True)
+# class Rotate(Modifier):
+#     x: float
+#     y: float
+#     index: int
+#     name: str = "TRANSLATION"
+
+#     def apply(
+#         self,
+#         primitives: list[Primitive],
+#     ) -> list[Primitive]:
+#         assert self.index < len(primitives), "This primitve does not exist"
+
+#         obj = primitives[self.index]
+#         obj_pos = obj.get_position()
+#         x = obj_pos[0] + self.x
+#         y = obj_pos[1] + self.y
+
+#         new_params = obj.get_params_dict()
+#         new_params["x"] = x
+#         new_params["y"] = y
+#         new_obj = type(obj)(**new_params)  # type: ignore
+
+#         new_primitives = primitives.copy()
+#         new_primitives[self.index] = new_obj
+
+#         return new_primitives
+
+#     def get_params(self) -> tuple[float, float, float, float]:
+#         return (self.x, self.y, self.index, 0.0)
+
+#     def __eq__(self, __o: object) -> bool:
+#         if not isinstance(__o, Translate):
+#             return False
+#         return (
+#             self.index == __o.index
+#             and math.isclose(self.x, __o.x, abs_tol=0.1)
+#             and math.isclose(self.y, __o.y, abs_tol=0.1)
+#         )
+
+
 @dataclass(frozen=True)
 class Constraint(Modifier):
     x: float
@@ -115,8 +174,8 @@ class Constraint(Modifier):
 
     def apply(
         self,
-        primitives: list[Circle],
-    ) -> list[Circle]:
+        primitives: list[Primitive],
+    ) -> list[Primitive]:
         obj_a = primitives[self.indicies[0]]
         obj_b = primitives[self.indicies[1]]
 
@@ -126,15 +185,20 @@ class Constraint(Modifier):
         )
         move_vector = difference_vector - constraint_vector
 
-        x = obj_b.x - move_vector[0]
-        y = obj_b.y - move_vector[1]
+        x, y = obj_b.get_position()
+        x = x - move_vector[0]
+        y = y - move_vector[1]
 
-        obj_b = Circle(obj_b.r, x, y)
-        obj_a = Circle(obj_a.r, obj_a.get_position()[0], obj_a.get_position()[1])
+        new_obj_a = type(obj_a)(**obj_a.get_params_dict())  # type: ignore
+
+        new_params = obj_b.get_params_dict()
+        new_params["x"] = x
+        new_params["y"] = y
+        new_obj_b = type(obj_b)(**new_params)  # type: ignore
 
         new_primitives = primitives.copy()
-        new_primitives[self.indicies[0]] = obj_a
-        new_primitives[self.indicies[1]] = obj_b
+        new_primitives[self.indicies[0]] = new_obj_a
+        new_primitives[self.indicies[1]] = new_obj_b
 
         return new_primitives
 
@@ -156,4 +220,3 @@ all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
 Primitives = list[Primitive]
 Modifiers = list[Modifier]
 Program = list[Instruction]
-

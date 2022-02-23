@@ -51,14 +51,13 @@ def write_definition(primitives: Primitives, modifiers: Modifiers) -> str:
     return labels_collapsed
 
 
-def generate_dataset2(config: DataConfig, display_plot: bool = False):
+def generator(config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
     data = []
     all_features = []
     all_programs = []
 
     for _ in tqdm(range(config.dataset_size)):
-        random_samples = []
         plain_samples = []
 
         primitives: Primitives = [
@@ -82,13 +81,12 @@ def generate_dataset2(config: DataConfig, display_plot: bool = False):
         for _ in range(config.num_sample_points):
             for primitive in primitives:
                 x, y = primitive.get_random_point()
-                random_samples.extend([str(x) + " " + str(y) + "\n"])
-
-                if display_plot:
-                    plain_samples.extend([(x, y)])
+                plain_samples.extend([(x, y)])
 
         all_features.append(plain_samples)
-        features_collapsed = "".join(random_samples)
+        features_collapsed = "".join(
+            [str(x) + " " + str(y) + "\n" for x, y in plain_samples]
+        )
         labels_collapsed = write_definition(primitives, modifiers)
 
         data.append([features_collapsed, labels_collapsed])
