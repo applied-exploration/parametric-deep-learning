@@ -4,19 +4,7 @@ import random
 from dataclasses import dataclass
 import numpy as np
 from abc import ABC
-from typing import Union
-
-
-@dataclass
-class DataConfig:
-    canvas_size: int
-    min_radius: int
-    max_radius: int
-    num_sample_points: int
-    dataset_size: int
-    num_circles: int
-    instruction_embedding_size: int
-    max_definition_len: int
+from typing import Union, Type
 
 
 Point = tuple[float, float]
@@ -79,11 +67,6 @@ class Circle(Primitive):
 
 
 @dataclass(frozen=True)
-class DummyPrimitive(Primitive):
-    pass
-
-
-@dataclass(frozen=True)
 class Translate(Modifier):
     x: float
     y: float
@@ -124,45 +107,43 @@ class Translate(Modifier):
         )
 
 
-# @dataclass(frozen=True)
-# class Rotate(Modifier):
-#     x: float
-#     y: float
-#     index: int
-#     name: str = "TRANSLATION"
+@dataclass(frozen=True)
+class Rotate(Modifier):
+    angle: float
+    index: int
+    name: str = "ROTATION"
 
-#     def apply(
-#         self,
-#         primitives: list[Primitive],
-#     ) -> list[Primitive]:
-#         assert self.index < len(primitives), "This primitve does not exist"
+    def apply(
+        self,
+        primitives: list[Primitive],
+    ) -> list[Primitive]:
+        assert self.index < len(primitives), "This primitve does not exist"
 
-#         obj = primitives[self.index]
-#         obj_pos = obj.get_position()
-#         x = obj_pos[0] + self.x
-#         y = obj_pos[1] + self.y
+        obj = primitives[self.index]
+        x, y = obj.get_position()
 
-#         new_params = obj.get_params_dict()
-#         new_params["x"] = x
-#         new_params["y"] = y
-#         new_obj = type(obj)(**new_params)  # type: ignore
+        new_x = (math.cos(self.angle) * x) - (math.sin(self.angle) * y)
+        new_y = math.sin(self.angle) * x + math.cos(self.angle) * y
 
-#         new_primitives = primitives.copy()
-#         new_primitives[self.index] = new_obj
+        new_params = obj.get_params_dict()
+        new_params["x"] = new_x
+        new_params["y"] = new_y
+        new_obj = type(obj)(**new_params)  # type: ignore
 
-#         return new_primitives
+        new_primitives = primitives.copy()
+        new_primitives[self.index] = new_obj
 
-#     def get_params(self) -> tuple[float, float, float, float]:
-#         return (self.x, self.y, self.index, 0.0)
+        return new_primitives
 
-#     def __eq__(self, __o: object) -> bool:
-#         if not isinstance(__o, Translate):
-#             return False
-#         return (
-#             self.index == __o.index
-#             and math.isclose(self.x, __o.x, abs_tol=0.1)
-#             and math.isclose(self.y, __o.y, abs_tol=0.1)
-#         )
+    def get_params(self) -> tuple[float, float, float, float]:
+        return (self.angle, self.index, 0.0, 0.0)
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, Rotate):
+            return False
+        return self.index == __o.index and math.isclose(
+            self.angle, __o.angle, abs_tol=0.1
+        )
 
 
 @dataclass(frozen=True)
@@ -220,3 +201,18 @@ all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
 Primitives = list[Primitive]
 Modifiers = list[Modifier]
 Program = list[Instruction]
+
+
+@dataclass
+class DataConfig:
+    canvas_size: int
+    min_radius: int
+    max_radius: int
+    num_sample_points: int
+    dataset_size: int
+    num_primitives: int
+    num_modifiers: int
+    instruction_embedding_size: int
+    max_definition_len: int
+    primitive_types: list[Type[Primitive]]
+    modifier_types: list[Type[Modifier]]

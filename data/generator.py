@@ -8,6 +8,7 @@ from data.types import (
     Modifiers,
     Primitives,
     Translate,
+    Rotate,
     Constraint,
     DataConfig,
     Program,
@@ -51,7 +52,7 @@ def write_definition(primitives: Primitives, modifiers: Modifiers) -> str:
     return labels_collapsed
 
 
-def generator(config: DataConfig, display_plot: bool = False):
+def generator(name: str, config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
     data = []
     all_features = []
@@ -60,16 +61,33 @@ def generator(config: DataConfig, display_plot: bool = False):
     for _ in tqdm(range(config.dataset_size)):
         plain_samples = []
 
-        primitives: Primitives = [
-            Circle(random_radius(config), *random_translation(config))
-            for _ in range(config.num_circles)
-        ]
+        primitives_to_use = random.choices(
+            config.primitive_types, k=config.num_primitives
+        )
+        modifiers_to_use = random.choices(config.modifier_types, k=config.num_modifiers)
 
-        modifiers: Modifiers = [
-            Translate(*random_translation(config), index=0),
-            Translate(*random_translation(config), index=1),
-            Constraint(x=25, y=0, indicies=(0, 1)),
-        ]
+        primitives: Primitives = []
+        modifiers: Modifiers = []
+        for primitive in primitives_to_use:
+            if type(primitive) == Circle:
+                new_primitive = Circle(
+                    random_radius(config), *random_translation(config)
+                )
+            else:
+                new_primitive = Circle(
+                    random_radius(config), *random_translation(config)
+                )
+            primitives.append(new_primitive)
+
+        for modifier in modifiers_to_use:
+            if type(modifier) == Translate:
+                new_modifier = Translate(*random_translation(config), index=0)
+            elif type(modifier) == Rotate:
+                new_modifier = Rotate(-180, index=1)
+            else:  # type(modifier) == Constraint:
+                new_modifier = Constraint(x=25, y=0, indicies=(0, 1))
+
+            modifiers.append(new_modifier)
 
         """ 1. Apply modifiers """
         instructions: list[Instruction] = [*primitives, *modifiers]
@@ -95,4 +113,4 @@ def generator(config: DataConfig, display_plot: bool = False):
         display_both(all_features[0], all_programs[0], config)
 
     df = pd.DataFrame(data, columns=column_names)
-    df.to_csv("data/dataset.csv", index=True)
+    df.to_csv("data/{}.csv".format(name), index=True)
