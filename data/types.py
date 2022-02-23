@@ -23,15 +23,23 @@ Point = tuple[float, float]
 
 
 class Instruction(ABC):
-    def get_random_point(self) -> tuple[float, float]:
-        raise NotImplementedError()
-
+    name:str
     def get_params(self) -> tuple[float, float, float, float]:
         raise NotImplementedError()
 
 
+class Primitive(Instruction):
+    def get_random_point(self) -> tuple[float, float]:
+        raise NotImplementedError()
+
+
+class Modifier(Instruction):
+    def apply(self, primitives: list[Primitive]) -> list[Primitive]:
+        raise NotImplementedError()
+
+
 @dataclass(frozen=True)
-class Circle(Instruction):
+class Circle(Primitive):
     r: float
     x: float
     y: float
@@ -61,7 +69,7 @@ class Circle(Instruction):
 
 
 @dataclass(frozen=True)
-class Translate(Instruction):
+class Translate(Modifier):
     x: float
     y: float
     index: int
@@ -99,7 +107,7 @@ class Translate(Instruction):
 
 
 @dataclass(frozen=True)
-class Constraint(Instruction):
+class Constraint(Modifier):
     x: float
     y: float
     indicies: tuple[int, int]
@@ -145,6 +153,7 @@ class Constraint(Instruction):
 
 all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
 
-Primitives = list[Circle]
-Modifiers = list[Union[Translate, Constraint]]
+Primitives = list[Primitive]
+Modifiers = list[Modifier]
 Program = list[Instruction]
+

@@ -1,5 +1,5 @@
 from dis import Instruction
-from data.types import Circle, Primitives, Modifiers, Program
+from data.types import Circle, Primitive, Primitives, Modifier, Modifiers, Program
 
 
 def render(instructions: Program) -> tuple[Primitives, Modifiers]:
@@ -8,9 +8,9 @@ def render(instructions: Program) -> tuple[Primitives, Modifiers]:
     modifiers: Modifiers = []
 
     for instruction in instructions:
-        if isinstance(instruction, Circle):
+        if isinstance(instruction, Primitive):
             primitives.append(instruction)
-        else:
+        elif isinstance(instruction, Modifier):
             modifiers.append(instruction)
 
     for modifier in modifiers:
