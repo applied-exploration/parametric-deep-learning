@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
+
 from data.types import DataConfig
 from models.types import Model
 
@@ -15,11 +16,12 @@ class ProgramSynthesisTask:
     embedding_to_program: Callable
     scorer: Callable
     model: Model
+    visualize: Optional[Callable]
 
 
 dataconfig = DataConfig(
     canvas_size=100,
-    dataset_size=3,
+    dataset_size=1000,
     min_radius=5,
     max_radius=20,
     num_sample_points=100,

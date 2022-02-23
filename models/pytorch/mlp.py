@@ -12,6 +12,7 @@ class MultiLayerPerceptron(pl.LightningModule):
     def __init__(
         self,
         hidden_layers_ratio: list[float] = [2.0, 2.0],
+        dropout_ratio: float = 0.0,
         probabilities: bool = False,
         loss_function=F.mse_loss,
     ):
@@ -19,7 +20,7 @@ class MultiLayerPerceptron(pl.LightningModule):
         self.hidden_layers_ratio = hidden_layers_ratio
         self.probabilities = probabilities
         self.loss_function = loss_function
-        self.float()
+        self.dropout_ratio = dropout_ratio
 
     def initialize_network(self, input_dim: int, output_dim: int) -> None:
         self.layers = nn.ModuleList()
@@ -28,6 +29,7 @@ class MultiLayerPerceptron(pl.LightningModule):
         for hdim in self.hidden_layers_ratio:
             hidden_layer_size = int(math.floor(current_dim * hdim))
             self.layers.append(nn.Linear(current_dim, hidden_layer_size))
+            self.layers.append(nn.Dropout(p=self.dropout_ratio))
             self.layers.append(nn.ReLU())
             current_dim = hidden_layer_size
 

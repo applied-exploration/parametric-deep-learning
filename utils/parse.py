@@ -1,7 +1,7 @@
-from data.types import Instruction, Circle, Point, Translate, Constraint
+from data.types import Instruction, Circle, Point, Translate, Constraint, Program
 
 
-def parse_program(input: str) -> list[Instruction]:
+def parse_program(input: str) -> Program:
     def parse_line(line: str) -> Instruction:
         parameters = line.split(" ")
         if line.startswith("CIRCLE"):
