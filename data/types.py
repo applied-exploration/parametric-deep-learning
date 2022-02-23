@@ -66,6 +66,39 @@ class Circle(Primitive):
         )
 
 
+# @dataclass(frozen=True)
+# class Square(Primitive):
+#     size: float
+#     x: float
+#     y: float
+#     name: str = "CIRCLE"
+
+#     def get_random_point(self) -> tuple[float, float]:
+#         angle = random.random() * math.pi * 2
+#         x = math.cos(angle) * self.r + self.x
+#         y = math.sin(angle) * self.r + self.y
+
+#         return (x, y)
+
+#     def get_params(self) -> tuple[float, float, float, float]:
+#         return (self.r, self.x, self.y, 0.0)
+
+#     def get_params_dict(self) -> dict:
+#         return {"r": self.r, "x": self.x, "y": self.y}
+
+#     def get_position(self) -> tuple[float, float]:
+#         return (self.x, self.y)
+
+#     def __eq__(self, __o: object) -> bool:
+#         if not isinstance(__o, Circle):
+#             return False
+#         return (
+#             math.isclose(self.r, __o.r, abs_tol=0.1)
+#             and math.isclose(self.x, __o.x, abs_tol=0.1)
+#             and math.isclose(self.y, __o.y, abs_tol=0.1)
+#         )
+
+
 @dataclass(frozen=True)
 class Translate(Modifier):
     x: float

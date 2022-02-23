@@ -59,8 +59,6 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
     all_programs = []
 
     for _ in tqdm(range(config.dataset_size)):
-        plain_samples = []
-
         primitives_to_use = random.choices(
             config.primitive_types, k=config.num_primitives
         )
@@ -79,13 +77,14 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
                 )
             primitives.append(new_primitive)
 
-        for modifier in modifiers_to_use:
-            if type(modifier) == Translate:
-                new_modifier = Translate(*random_translation(config), index=0)
+        for i, modifier in enumerate(modifiers_to_use):
+            if type(modifier) == Constraint:
+                if i == len(modifiers_to_use):
+                    new_modifier = Constraint(x=25, y=0, indicies=(0, 1))
             elif type(modifier) == Rotate:
                 new_modifier = Rotate(-180, index=1)
-            else:  # type(modifier) == Constraint:
-                new_modifier = Constraint(x=25, y=0, indicies=(0, 1))
+            else:  # type(modifier) == Translate:
+                new_modifier = Translate(*random_translation(config), index=0)
 
             modifiers.append(new_modifier)
 
@@ -96,6 +95,7 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
             all_programs.append(primitives)
 
         """ 2. Sample operations """
+        plain_samples = []
         for _ in range(config.num_sample_points):
             for primitive in primitives:
                 x, y = primitive.get_random_point()
