@@ -34,11 +34,26 @@ class Modifier(Instruction):
         raise NotImplementedError()
 
 
+def _add_rotation(angle: float, x: float, y: float) -> tuple[float, float]:
+    rotation_matrix = np.array(
+        [[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]]
+    )
+    point = np.array([x, y])
+
+    multiplied = np.matmul(rotation_matrix, point)
+
+    x = multiplied[0]
+    y = multiplied[1]
+
+    return x, y
+
+
 @dataclass(frozen=True)
 class Circle(Primitive):
     r: float
     x: float
     y: float
+    angle: float
     name: str = "CIRCLE"
 
     def get_random_point(self) -> tuple[float, float]:
@@ -52,7 +67,7 @@ class Circle(Primitive):
         return (self.r, self.x, self.y, 0.0)
 
     def get_params_dict(self) -> dict:
-        return {"r": self.r, "x": self.x, "y": self.y}
+        return {"r": self.r, "x": self.x, "y": self.y, "angle": self.angle}
 
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
@@ -87,6 +102,7 @@ class Square(Primitive):
     size: float
     x: float
     y: float
+    angle: float
     name: str = "SQUARE"
 
     def get_random_point(self) -> tuple[float, float]:
@@ -106,6 +122,7 @@ class Square(Primitive):
 
         x = point_from_center[0] + self.x
         y = point_from_center[1] + self.y
+        x, y = _add_rotation(self.angle, x, y)
 
         return (x, y)
 
@@ -113,7 +130,7 @@ class Square(Primitive):
         return (self.size, self.x, self.y, 0.0)
 
     def get_params_dict(self) -> dict:
-        return {"size": self.size, "x": self.x, "y": self.y}
+        return {"size": self.size, "x": self.x, "y": self.y, "angle": self.angle}
 
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
@@ -126,14 +143,14 @@ class Square(Primitive):
             random.random(),
         ),
     ):
-        points = np.array(
-            [
-                [self.x + self.size, self.y + self.size],
-                [self.x + self.size, self.y - self.size],
-                [self.x - self.size, self.y - self.size],
-                [self.x - self.size, self.y + self.size],
-            ]
-        )
+        points = [
+            [self.x + self.size, self.y + self.size],
+            [self.x + self.size, self.y - self.size],
+            [self.x - self.size, self.y - self.size],
+            [self.x - self.size, self.y + self.size],
+        ]
+
+        points = np.array([list(_add_rotation(self.angle, x, y)) for x, y in points])
 
         return mpatches.Polygon(
             points,
@@ -157,12 +174,13 @@ class Triangle(Primitive):
     size: float
     x: float
     y: float
+    angle: float
     name: str = "TRIANGLE"
 
     def get_random_point(self) -> tuple[float, float]:
         choose_side = random.choice([0, 1, 1])
 
-        random_x = random.uniform(-1, 1) * self.size# * random.choice([-1, 1])
+        random_x = random.uniform(-1, 1) * self.size  # * random.choice([-1, 1])
         corresponding_y = (self.size - abs(random_x)) * math.sqrt(3.0)
 
         corresponding_y *= choose_side
@@ -170,13 +188,15 @@ class Triangle(Primitive):
         x = random_x + self.x
         y = corresponding_y + self.y
 
+        x, y = _add_rotation(self.angle, x, y)
+
         return (x, y)
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.size, self.x, self.y, 0.0)
 
     def get_params_dict(self) -> dict:
-        return {"size": self.size, "x": self.x, "y": self.y}
+        return {"size": self.size, "x": self.x, "y": self.y, "angle": self.angle}
 
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
@@ -190,13 +210,13 @@ class Triangle(Primitive):
         ),
     ):
 
-        points = np.array(
-            [
-                [self.x + self.size, self.y],
-                [self.x, self.y + (math.sqrt(3.0) * self.size)],
-                [self.x - self.size, self.y],
-            ]
-        )
+        points = [
+            [self.x + self.size, self.y],
+            [self.x, self.y + (math.sqrt(3.0) * self.size)],
+            [self.x - self.size, self.y],
+        ]
+
+        points = np.array([list(_add_rotation(self.angle, x, y)) for x, y in points])
 
         return mpatches.Polygon(
             points,
@@ -277,6 +297,7 @@ class Rotate(Modifier):
         new_params = obj.get_params_dict()
         new_params["x"] = new_x
         new_params["y"] = new_y
+        new_params["angle"] = self.angle + new_params["angle"]
         new_obj = type(obj)(**new_params)  # type: ignore
 
         new_primitives = primitives.copy()
@@ -360,6 +381,7 @@ class DataConfig:
     num_sample_points: int
     dataset_size: int
     num_primitives: int
+    random_primitives: bool
     num_modifiers: int
     instruction_embedding_size: int
     max_definition_len: int

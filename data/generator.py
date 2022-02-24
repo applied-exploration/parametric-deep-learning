@@ -54,50 +54,84 @@ def write_definition(primitives: Primitives, modifiers: Modifiers) -> str:
     return labels_collapsed
 
 
+def random_index(num_primitives: int) -> int:
+    return random.randint(0, num_primitives - 1)
+
+
+def random_indecies(num_primitives: int) -> tuple[int, int]:
+    sample = random.sample(range(num_primitives), k=2)
+    return (sample[0], sample[1])
+
+
+def map_primitives(config: DataConfig, primitives_to_use: list) -> Primitives:
+    primitives: Primitives = []
+    for primitive in primitives_to_use:
+        if isinstance(Circle(0, 0, 0, 0), primitive):
+            new_primitive = Circle(
+                random_radius(config), *random_translation(config), 0
+            )
+        elif isinstance(Square(0, 0, 0, 0), primitive):
+            new_primitive = Square(
+                random_radius(config), *random_translation(config), 0
+            )
+        elif isinstance(Triangle(0, 0, 0, 0), primitive):
+            new_primitive = Triangle(
+                random_radius(config), *random_translation(config), 0
+            )
+        else:
+            continue
+        primitives.append(new_primitive)
+    return primitives
+
+
+def map_modifiers(config: DataConfig, modifiers_to_use: list) -> Modifiers:
+    modifiers: Modifiers = []
+
+    constraint_present = None
+    for i, modifier in enumerate(modifiers_to_use):
+        if isinstance(Constraint(0, 0, (0, 0)), modifier):
+            constraint_present = Constraint(
+                x=random.random() * config.canvas_size / 3,
+                y=0,
+                indicies=random_indecies(config.num_primitives),
+            )
+            continue
+
+        elif isinstance(Rotate(0, 0), modifier):
+            new_modifier = Rotate(
+                random.random() * 360, index=random_index(config.num_primitives)
+            )
+        elif isinstance(Translate(0, 0, 0), modifier):
+            new_modifier = Translate(
+                *random_translation(config), index=random_index(config.num_primitives)
+            )
+        else:
+            continue
+        modifiers.append(new_modifier)
+
+    if constraint_present is not None:
+        modifiers.append(constraint_present)  # place modifiers as the last object
+
+    return modifiers
+
+
 def generator(name: str, config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
     data = []
     all_features = []
     all_programs = []
+    if config.random_primitives:
+        config.num_primitives = random.choice(range(2, config.num_primitives))
 
     for _ in tqdm(range(config.dataset_size)):
+        """0. Prepare the primitives and modifiers"""
         primitives_to_use = random.choices(
             config.primitive_types, k=config.num_primitives
         )
         modifiers_to_use = random.choices(config.modifier_types, k=config.num_modifiers)
 
-        primitives: Primitives = []
-        modifiers: Modifiers = []
-        for primitive in primitives_to_use:
-            if isinstance(Circle(0, 0, 0), primitive):
-                new_primitive = Circle(
-                    random_radius(config), *random_translation(config)
-                )
-            elif isinstance(Square(0, 0, 0), primitive):
-                new_primitive = Square(
-                    random_radius(config), *random_translation(config)
-                )
-            elif isinstance(Triangle(0, 0, 0), primitive):
-                new_primitive = Triangle(
-                    random_radius(config), *random_translation(config)
-                )
-            else:
-                continue
-            primitives.append(new_primitive)
-
-        for i, modifier in enumerate(modifiers_to_use):
-            if isinstance(Constraint(0, 0, (0, 0)), modifier):
-                if i == len(modifiers_to_use):
-                    new_modifier = Constraint(x=25, y=0, indicies=(0, 1))
-                else:
-                    continue
-            elif isinstance(Rotate(0, 0), modifier):
-                new_modifier = Rotate(-180, index=1)
-            elif isinstance(Translate(0, 0, 0), modifier):
-                new_modifier = Translate(*random_translation(config), index=0)
-            else:
-                continue
-            modifiers.append(new_modifier)
+        primitives: Primitives = map_primitives(config, primitives_to_use)
+        modifiers: Modifiers = map_modifiers(config, modifiers_to_use)
 
         """ 1. Apply modifiers """
         instructions: list[Instruction] = [*primitives, *modifiers]
