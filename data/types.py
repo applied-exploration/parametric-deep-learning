@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import numpy as np
 from abc import ABC
 from typing import Union, Type
+import matplotlib.patches as mpatches
 
 
 Point = tuple[float, float]
@@ -56,6 +57,21 @@ class Circle(Primitive):
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
 
+    def render(
+        self,
+        color: tuple[float, float, float] = (
+            random.random(),
+            random.random(),
+            random.random(),
+        ),
+    ):
+        return mpatches.Circle(
+            (self.x, self.y),
+            self.r,
+            edgecolor=color,
+            facecolor=(0.0, 0.0, 0.0, 0.0),
+        )
+
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Circle):
             return False
@@ -102,11 +118,35 @@ class Square(Primitive):
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
 
+    def render(
+        self,
+        color: tuple[float, float, float] = (
+            random.random(),
+            random.random(),
+            random.random(),
+        ),
+    ):
+        points = np.array(
+            [
+                [self.x + self.size, self.y + self.size],
+                [self.x + self.size, self.y - self.size],
+                [self.x - self.size, self.y - self.size],
+                [self.x - self.size, self.y + self.size],
+            ]
+        )
+
+        return mpatches.Polygon(
+            points,
+            closed=True,
+            edgecolor=color,
+            facecolor=(0.0, 0.0, 0.0, 0.0),
+        )
+
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Square):
             return False
         return (
-            math.isclose(self.size, __o.r, abs_tol=0.1)
+            math.isclose(self.size, __o.size, abs_tol=0.1)
             and math.isclose(self.x, __o.x, abs_tol=0.1)
             and math.isclose(self.y, __o.y, abs_tol=0.1)
         )
@@ -122,9 +162,8 @@ class Triangle(Primitive):
     def get_random_point(self) -> tuple[float, float]:
         choose_side = random.choice([0, 1, 1])
 
-        random_x = random.uniform(-1, 1) * self.size
-        difference = self.size - abs(random_x)
-        corresponding_y = difference * math.tan(60) * 3 # I have no idea why we have to multiply by 3, it was too flat otherwise, and cant find anything wrong with my calculation.
+        random_x = random.uniform(-1, 1) * self.size# * random.choice([-1, 1])
+        corresponding_y = (self.size - abs(random_x)) * math.sqrt(3.0)
 
         corresponding_y *= choose_side
 
@@ -141,6 +180,30 @@ class Triangle(Primitive):
 
     def get_position(self) -> tuple[float, float]:
         return (self.x, self.y)
+
+    def render(
+        self,
+        color: tuple[float, float, float] = (
+            random.random(),
+            random.random(),
+            random.random(),
+        ),
+    ):
+
+        points = np.array(
+            [
+                [self.x + self.size, self.y],
+                [self.x, self.y + (math.sqrt(3.0) * self.size)],
+                [self.x - self.size, self.y],
+            ]
+        )
+
+        return mpatches.Polygon(
+            points,
+            closed=True,
+            edgecolor=color,
+            facecolor=(0.0, 0.0, 0.0, 0.0),
+        )
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Triangle):
