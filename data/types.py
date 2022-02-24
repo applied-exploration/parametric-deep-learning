@@ -64,7 +64,7 @@ class Circle(Primitive):
         return (x, y)
 
     def get_params(self) -> tuple[float, float, float, float]:
-        return (self.r, self.x, self.y, 0.0)
+        return (self.r, self.x, self.y, self.angle)
 
     def get_params_dict(self) -> dict:
         return {"r": self.r, "x": self.x, "y": self.y, "angle": self.angle}
@@ -94,6 +94,7 @@ class Circle(Primitive):
             math.isclose(self.r, __o.r, abs_tol=0.1)
             and math.isclose(self.x, __o.x, abs_tol=0.1)
             and math.isclose(self.y, __o.y, abs_tol=0.1)
+            and math.isclose(self.angle, __o.angle, abs_tol=0.5)
         )
 
 
@@ -127,7 +128,7 @@ class Square(Primitive):
         return (x, y)
 
     def get_params(self) -> tuple[float, float, float, float]:
-        return (self.size, self.x, self.y, 0.0)
+        return (self.size, self.x, self.y, self.angle)
 
     def get_params_dict(self) -> dict:
         return {"size": self.size, "x": self.x, "y": self.y, "angle": self.angle}
@@ -166,6 +167,7 @@ class Square(Primitive):
             math.isclose(self.size, __o.size, abs_tol=0.1)
             and math.isclose(self.x, __o.x, abs_tol=0.1)
             and math.isclose(self.y, __o.y, abs_tol=0.1)
+            and math.isclose(self.angle, __o.angle, abs_tol=0.5)
         )
 
 
@@ -193,7 +195,7 @@ class Triangle(Primitive):
         return (x, y)
 
     def get_params(self) -> tuple[float, float, float, float]:
-        return (self.size, self.x, self.y, 0.0)
+        return (self.size, self.x, self.y, self.angle)
 
     def get_params_dict(self) -> dict:
         return {"size": self.size, "x": self.x, "y": self.y, "angle": self.angle}
@@ -232,6 +234,7 @@ class Triangle(Primitive):
             math.isclose(self.size, __o.size, abs_tol=0.1)
             and math.isclose(self.x, __o.x, abs_tol=0.1)
             and math.isclose(self.y, __o.y, abs_tol=0.1)
+            and math.isclose(self.angle, __o.angle, abs_tol=0.5)
         )
 
 
@@ -312,7 +315,7 @@ class Rotate(Modifier):
         if not isinstance(__o, Rotate):
             return False
         return self.index == __o.index and math.isclose(
-            self.angle, __o.angle, abs_tol=0.1
+            self.angle, __o.angle, abs_tol=0.5
         )
 
 
@@ -366,7 +369,14 @@ class Constraint(Modifier):
         )
 
 
-all_instructions = {Circle: 0, Square:1, Triangle:2, Translate: 3, Rotate:4, Constraint: 5}
+all_instructions = {
+    Circle: 0,
+    Square: 1,
+    Triangle: 2,
+    Translate: 3,
+    Rotate: 4,
+    Constraint: 5,
+}
 
 Primitives = list[Primitive]
 Modifiers = list[Modifier]

@@ -11,11 +11,11 @@ from utils.parse import parse_points, parse_program
 from config import ProgramSynthesisTask, dataconfig
 from utils.scoring import score_programs
 from render.visualize import visualize
-
+from data.types import all_instructions
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
-    instructions_map={"move": 0, "turn": 1, "draw": 2},
+    instructions_map=all_instructions,
     parse_input=parse_points,
     parse_program=parse_program,
     embed_input=embed_and_normalize_points(dataconfig),

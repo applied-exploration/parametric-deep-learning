@@ -38,7 +38,7 @@ def random_translation(config: DataConfig) -> tuple[float, float]:
 def write_definition(primitives: Primitives, modifiers: Modifiers) -> str:
     primitive_str = "".join(
         [
-            "{} {} {} {}\n".format(primitive.name, *primitive.get_params())
+            "{} {} {} {} {}\n".format(primitive.name, *primitive.get_params())
             for primitive in primitives
         ]
     )
