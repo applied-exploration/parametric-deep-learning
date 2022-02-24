@@ -366,7 +366,7 @@ class Constraint(Modifier):
         )
 
 
-all_instructions = {Circle: 0, Translate: 1, Constraint: 2}
+all_instructions = {Circle: 0, Square:1, Triangle:2, Translate: 3, Rotate:4, Constraint: 5}
 
 Primitives = list[Primitive]
 Modifiers = list[Modifier]

@@ -115,6 +115,8 @@ def from_embeddings_to_instructions(dataconfig: DataConfig) -> Callable:
                     x=embedding[parameters_start_from] * dataconfig.canvas_size,
                     y=embedding[parameters_start_from + 1] * dataconfig.canvas_size,
                     r=embedding[parameters_start_from + 2] * dataconfig.max_radius,
+                    angle=embedding[parameters_start_from + 3]
+                    * 360,  # we have to check if this is correct.
                 )
             elif instruction_type == 1:
                 return Translate(
