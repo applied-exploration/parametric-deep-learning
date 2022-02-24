@@ -28,6 +28,20 @@ class ProgramSynthesisTask:
     visualize: Optional[Callable]
 
 
+dataconfig = DataConfig(
+    canvas_size=100,
+    dataset_size=1000,
+    min_radius=5,
+    max_radius=20,
+    num_sample_points=100,
+    num_primitives=2,
+    random_primitives=False,
+    num_modifiers=3,
+    instruction_embedding_size=26,
+    max_definition_len=10,  # maximum length of the program - we need this to know how many objects can be referenced in constraints,
+    primitive_types=[Circle],
+    modifier_types=[Translate],
+)
 dataconfig_1 = DataConfig(
     canvas_size=100,
     dataset_size=1000,
