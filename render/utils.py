@@ -47,8 +47,8 @@ def display_both(
     fig, axes = plt.subplots(ncols=2)
     for ax in axes:
         ax.set(adjustable="box", aspect="equal")
-        ax.set_xlim(-config.canvas_size / 2, config.canvas_size)
-        ax.set_ylim(-config.canvas_size / 2, config.canvas_size)
+        ax.set_xlim(-config.canvas_size / 2, config.canvas_size / 2)
+        ax.set_ylim(-config.canvas_size / 2, config.canvas_size / 2)
 
     cmap = plt.cm.get_cmap(plt.cm.viridis, 143).colors
 
