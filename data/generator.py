@@ -5,6 +5,8 @@ from tqdm import tqdm
 import numpy as np
 from data.types import (
     Circle,
+    Square,
+    Triangle,
     Modifiers,
     Primitives,
     Translate,
@@ -67,25 +69,34 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
         primitives: Primitives = []
         modifiers: Modifiers = []
         for primitive in primitives_to_use:
-            if type(primitive) == Circle:
+            if isinstance(Circle(0, 0, 0), primitive):
                 new_primitive = Circle(
+                    random_radius(config), *random_translation(config)
+                )
+            elif isinstance(Square(0, 0, 0), primitive):
+                new_primitive = Square(
+                    random_radius(config), *random_translation(config)
+                )
+            elif isinstance(Triangle(0, 0, 0), primitive):
+                new_primitive = Triangle(
                     random_radius(config), *random_translation(config)
                 )
             else:
-                new_primitive = Circle(
-                    random_radius(config), *random_translation(config)
-                )
+                continue
             primitives.append(new_primitive)
 
         for i, modifier in enumerate(modifiers_to_use):
-            if type(modifier) == Constraint:
+            if isinstance(Constraint(0, 0, (0, 0)), modifier):
                 if i == len(modifiers_to_use):
                     new_modifier = Constraint(x=25, y=0, indicies=(0, 1))
-            elif type(modifier) == Rotate:
+                else:
+                    continue
+            elif isinstance(Rotate(0, 0), modifier):
                 new_modifier = Rotate(-180, index=1)
-            else:  # type(modifier) == Translate:
+            elif isinstance(Translate(0, 0, 0), modifier):
                 new_modifier = Translate(*random_translation(config), index=0)
-
+            else:
+                continue
             modifiers.append(new_modifier)
 
         """ 1. Apply modifiers """

@@ -66,37 +66,90 @@ class Circle(Primitive):
         )
 
 
-# @dataclass(frozen=True)
-# class Square(Primitive):
-#     size: float
-#     x: float
-#     y: float
-#     name: str = "CIRCLE"
+@dataclass(frozen=True)
+class Square(Primitive):
+    size: float
+    x: float
+    y: float
+    name: str = "SQUARE"
 
-#     def get_random_point(self) -> tuple[float, float]:
-#         angle = random.random() * math.pi * 2
-#         x = math.cos(angle) * self.r + self.x
-#         y = math.sin(angle) * self.r + self.y
+    def get_random_point(self) -> tuple[float, float]:
+        coinflip = random.random()
 
-#         return (x, y)
+        point_from_center = ()
+        if coinflip > 0.5:
+            point_from_center = (
+                random.choice([-1, 1]) * self.size,
+                random.uniform(-1, 1) * self.size,
+            )
+        else:
+            point_from_center = (
+                random.uniform(-1, 1) * self.size,
+                random.choice([-1, 1]) * self.size,
+            )
 
-#     def get_params(self) -> tuple[float, float, float, float]:
-#         return (self.r, self.x, self.y, 0.0)
+        x = point_from_center[0] + self.x
+        y = point_from_center[1] + self.y
 
-#     def get_params_dict(self) -> dict:
-#         return {"r": self.r, "x": self.x, "y": self.y}
+        return (x, y)
 
-#     def get_position(self) -> tuple[float, float]:
-#         return (self.x, self.y)
+    def get_params(self) -> tuple[float, float, float, float]:
+        return (self.size, self.x, self.y, 0.0)
 
-#     def __eq__(self, __o: object) -> bool:
-#         if not isinstance(__o, Circle):
-#             return False
-#         return (
-#             math.isclose(self.r, __o.r, abs_tol=0.1)
-#             and math.isclose(self.x, __o.x, abs_tol=0.1)
-#             and math.isclose(self.y, __o.y, abs_tol=0.1)
-#         )
+    def get_params_dict(self) -> dict:
+        return {"size": self.size, "x": self.x, "y": self.y}
+
+    def get_position(self) -> tuple[float, float]:
+        return (self.x, self.y)
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, Square):
+            return False
+        return (
+            math.isclose(self.size, __o.r, abs_tol=0.1)
+            and math.isclose(self.x, __o.x, abs_tol=0.1)
+            and math.isclose(self.y, __o.y, abs_tol=0.1)
+        )
+
+
+@dataclass(frozen=True)
+class Triangle(Primitive):
+    size: float
+    x: float
+    y: float
+    name: str = "TRIANGLE"
+
+    def get_random_point(self) -> tuple[float, float]:
+        choose_side = random.choice([0, 1, 1])
+
+        random_x = random.uniform(-1, 1) * self.size
+        difference = self.size - abs(random_x)
+        corresponding_y = difference * math.tan(60) * 3 # I have no idea why we have to multiply by 3, it was too flat otherwise, and cant find anything wrong with my calculation.
+
+        corresponding_y *= choose_side
+
+        x = random_x + self.x
+        y = corresponding_y + self.y
+
+        return (x, y)
+
+    def get_params(self) -> tuple[float, float, float, float]:
+        return (self.size, self.x, self.y, 0.0)
+
+    def get_params_dict(self) -> dict:
+        return {"size": self.size, "x": self.x, "y": self.y}
+
+    def get_position(self) -> tuple[float, float]:
+        return (self.x, self.y)
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, Triangle):
+            return False
+        return (
+            math.isclose(self.size, __o.size, abs_tol=0.1)
+            and math.isclose(self.x, __o.x, abs_tol=0.1)
+            and math.isclose(self.y, __o.y, abs_tol=0.1)
+        )
 
 
 @dataclass(frozen=True)

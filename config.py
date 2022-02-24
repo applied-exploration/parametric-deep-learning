@@ -1,7 +1,16 @@
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from data.types import DataConfig, Circle, Translate, Rotate, Constraint, Instruction
+from data.types import (
+    DataConfig,
+    Circle,
+    Square,
+    Triangle,
+    Translate,
+    Rotate,
+    Constraint,
+    Instruction,
+)
 from models.types import Model
 
 
@@ -35,13 +44,13 @@ dataconfig_1 = DataConfig(
 dataconfig_2 = DataConfig(
     canvas_size=100,
     dataset_size=1000,
-    min_radius=5,
+    min_radius=9,
     max_radius=20,
-    num_sample_points=100,
-    num_primitives=2,
+    num_sample_points=50,
+    num_primitives=4,
     num_modifiers=5,
     instruction_embedding_size=26,
     max_definition_len=10,  # maximum length of the program - we need this to know how many objects can be referenced in constraints
-    primitive_types=[Circle],
+    primitive_types=[Circle, Square, Triangle],
     modifier_types=[Translate, Rotate, Constraint],
 )

@@ -55,15 +55,15 @@ def display_both(
     for i, point in enumerate(points):
         axes[0].scatter(point[0], point[1])
 
-    for i, primitive in enumerate(rendered_primitives):
-        axes[1].add_patch(
-            mpatches.Circle(
-                (primitive.x, primitive.y),
-                primitive.r,
-                edgecolor=cmap[i],
-                facecolor=(0.0, 0.0, 0.0, 0.0),
-            ),
-        )
+    # for i, primitive in enumerate(rendered_primitives):
+    #     axes[1].add_patch(
+    #         mpatches.Circle(
+    #             (primitive.x, primitive.y),
+    #             primitive.r,
+    #             edgecolor=cmap[i],
+    #             facecolor=(0.0, 0.0, 0.0, 0.0),
+    #         ),
+    #     )
 
     # fig, axs = plt.subplots(ncols=2)
     # plt.xlim(-config.canvas_size / 2, config.canvas_size)
