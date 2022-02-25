@@ -58,12 +58,12 @@ dataconfig_1 = DataConfig(
 )
 dataconfig_2 = DataConfig(
     canvas_size=100,
-    dataset_size=1000,
+    dataset_size=3,
     min_radius=9,
     max_radius=20,
     num_sample_points=50,
-    num_primitives=6,
-    random_primitives=True,
+    num_primitives=4,
+    random_primitives=False,
     num_modifiers=5,
     instruction_embedding_size=26,
     max_definition_len=10,  # maximum length of the program - we need this to know how many objects can be referenced in constraints

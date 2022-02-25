@@ -4,6 +4,7 @@ from matplotlib.collections import PatchCollection
 from data.types import DataConfig, Primitives, Point
 import numpy as np
 from typing import Union
+import itertools
 
 
 def display_features(objects: list, config: DataConfig) -> None:
@@ -41,7 +42,7 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
     plt.show()
 
 
-def display_both(
+def display_both2(
     points: list[Point], rendered_primitives: Primitives, config: DataConfig
 ) -> None:
     fig, axes = plt.subplots(ncols=2)
@@ -57,5 +58,43 @@ def display_both(
 
     for i, primitive in enumerate(rendered_primitives):
         axes[1].add_patch(primitive.render())
+
+    plt.show()
+
+
+def display_both(
+    points: list[list[Point]], rendered_primitives: list[Primitives],  config: DataConfig, interactive:bool =False
+) -> None:
+    fig, axes = plt.subplots(ncols=2)
+    
+    def axis_setup():
+        for ax in axes:
+            ax.set(adjustable="box", aspect="equal")
+            ax.set_xlim(-config.canvas_size / 2, config.canvas_size / 2)
+            ax.set_ylim(-config.canvas_size / 2, config.canvas_size / 2)
+
+
+    ys_points = itertools.cycle(points)
+    ys_primitives = itertools.cycle(rendered_primitives)
+    def add_data():
+        for i, point in enumerate(next(ys_points)):
+            axes[0].scatter(point[0], point[1])
+
+        for i, primitive in enumerate(next(ys_primitives)):
+            axes[1].add_patch(primitive.render())
+
+    axis_setup()
+    add_data()
+    
+    if interactive:
+        def onclick(event):
+            axes[0].cla()
+            axes[1].cla()
+            axis_setup()
+            add_data()
+
+            fig.canvas.draw()
+
+        cid = fig.canvas.mpl_connect("button_press_event", onclick)
 
     plt.show()

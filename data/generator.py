@@ -155,7 +155,7 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
         data.append([features_collapsed, labels_collapsed])
 
     if display_plot:
-        display_both(all_features[0], all_programs[0], config)
+        display_both(all_features, all_programs, config, interactive=True)
 
     df = pd.DataFrame(data, columns=column_names)
     df.to_csv("data/{}.csv".format(name), index=True)
