@@ -45,12 +45,21 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
         target_index1 = target_per_instruction[
             :, :, index_parameters_end:index_index1_end
         ]
-        loss_index1 = F.cross_entropy(input_index1, target_index1)
+        # if target is "padding" (all zeros), then we should zero out the loss, as it doesn't matter
+        if target_index1 == [-1] * dataconfig.max_definition_len:
+            loss_index1 = Tensor([0.0])
+        else:
+            loss_index1 = F.cross_entropy(input_index1, target_index1)
 
         index_index2_end = index_parameters_end + (dataconfig.max_definition_len * 2)
         input_index2 = input_per_instruction[:, :, index_index1_end:index_index2_end]
         target_index2 = target_per_instruction[:, :, index_index1_end:index_index2_end]
         loss_index2 = F.cross_entropy(input_index2, target_index2)
+        # if target is "padding" (all zeros), then we should zero out the loss, as it doesn't matter
+        if target_index1 == [-1] * dataconfig.max_definition_len:
+            loss_index1 = Tensor([0.0])
+        else:
+            loss_index1 = F.cross_entropy(input_index1, target_index1)
 
         return loss_instructions_types + loss_parameters + loss_index1 + loss_index2
 

@@ -48,8 +48,8 @@ def __embed_instruction(
        1.         2.                        3.                         4.
     """
     quantize_bins = 100
-    parameter_padding = torch.Tensor([0.0])
-    index_padding = torch.Tensor([0.0] * dataconfig.max_definition_len)
+    parameter_padding = torch.Tensor([-1.0])
+    index_padding = torch.Tensor([-1] * dataconfig.max_definition_len)
     instruction_type = to_onehot(
         all_instructions[type(instruction)], len(all_instructions)
     )
