@@ -14,7 +14,7 @@ def score_programs(y: list[Program], pred: list[Program]) -> float:
     if not instructions_match:
         return min_score
 
-    def get_params(instructions: Program) -> list[list[float]]:
+    def get_params(instructions: Program) -> list[tuple[float, float, float, float]]:
         return [instruction.get_params() for instruction in instructions]
 
     y_params = [get_params(row) for row in y]

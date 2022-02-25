@@ -1,4 +1,14 @@
-from data.types import Instruction, Circle, Point, Translate, Constraint, Program
+from data.types import (
+    Instruction,
+    Circle,
+    Point,
+    Translate,
+    Constraint,
+    Program,
+    Triangle,
+    Square,
+    Rotate,
+)
 
 
 def parse_program(input: str) -> Program:
@@ -6,17 +16,39 @@ def parse_program(input: str) -> Program:
         parameters = line.split(" ")
         if line.startswith("CIRCLE"):
             return Circle(
-                float(parameters[1]), float(parameters[2]), float(parameters[3])
+                r=float(parameters[1]),
+                x=float(parameters[2]),
+                y=float(parameters[3]),
+                angle=float(parameters[4]),
+            )
+        elif line.startswith("SQUARE"):
+            return Square(
+                size=float(parameters[1]),
+                x=float(parameters[2]),
+                y=float(parameters[3]),
+                angle=float(parameters[4]),
+            )
+        elif line.startswith("TRIANGLE"):
+            return Triangle(
+                size=float(parameters[1]),
+                x=float(parameters[2]),
+                y=float(parameters[3]),
+                angle=float(parameters[4]),
             )
         elif line.startswith("TRANSLATION"):
             return Translate(
-                float(parameters[1]), float(parameters[2]), int(parameters[3])
+                x=float(parameters[1]), y=float(parameters[2]), index=int(parameters[3])
             )
         elif line.startswith("CONSTRAINT"):
             return Constraint(
-                float(parameters[1]),
-                float(parameters[2]),
-                (int(parameters[3]), int(parameters[4])),
+                x=float(parameters[1]),
+                y=float(parameters[2]),
+                indicies=(int(parameters[3]), int(parameters[4])),
+            )
+        elif line.startswith("ROTATION"):
+            return Rotate(
+                angle=float(parameters[1]),
+                index=int(parameters[2]),
             )
         else:
             raise Exception(f"Unknown instruction: {line}")

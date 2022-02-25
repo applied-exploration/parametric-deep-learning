@@ -4,6 +4,7 @@ from matplotlib.collections import PatchCollection
 from data.types import DataConfig, Primitives, Point
 import numpy as np
 from typing import Union
+import itertools
 
 
 def display_features(objects: list, config: DataConfig) -> None:
@@ -42,32 +43,59 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
 
 
 def display_both(
-    points: list[Point], rendered_primitives: Primitives, config: DataConfig
+    points: list[list[Point]],
+    rendered_primitives: list[Primitives],
+    config: DataConfig,
+    interactive: bool = False,
 ) -> None:
     fig, axes = plt.subplots(ncols=2)
-    for ax in axes:
-        ax.set(adjustable="box", aspect="equal")
-        ax.set_xlim(-config.canvas_size / 2, config.canvas_size)
-        ax.set_ylim(-config.canvas_size / 2, config.canvas_size)
 
-    cmap = plt.cm.get_cmap(plt.cm.viridis, 143).colors
+    # programs_unzipped = list(map(list, zip(*rendered_primitives)))
 
-    for i, point in enumerate(points):
-        axes[0].scatter(point[0], point[1])
+    def axis_setup():
+        for ax in axes:
+            ax.set(adjustable="box", aspect="equal")
+            ax.set_xlim(-config.canvas_size / 2, config.canvas_size / 2)
+            ax.set_ylim(-config.canvas_size / 2, config.canvas_size / 2)
 
-    for i, primitive in enumerate(rendered_primitives):
-        axes[1].add_patch(
-            mpatches.Circle(
-                (primitive.x, primitive.y),
-                primitive.r,
-                edgecolor=cmap[i],
-                facecolor=(0.0, 0.0, 0.0, 0.0),
-            ),
+    ys_points = itertools.cycle(points)
+    ys_primitives = itertools.cycle(rendered_primitives)
+
+    def add_data():
+        next_element = next(ys_primitives)
+        primitives = next_element[0]
+        program_str = next_element[1]
+
+        for i, point in enumerate(next(ys_points)):
+            axes[0].scatter(point[0], point[1])
+
+        for i, primitive in enumerate(primitives):
+            axes[1].add_patch(primitive.render())
+
+        props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
+        axes[1].text(
+            -0.15,
+            -0.25,
+            program_str,
+            transform=axes[1].transAxes,
+            fontsize=14,
+            verticalalignment="top",
+            bbox=props,
         )
 
-    # fig, axs = plt.subplots(ncols=2)
-    # plt.xlim(-config.canvas_size / 2, config.canvas_size)
-    # plt.ylim(-config.canvas_size / 2, config.canvas_size)
-    # plt.gca().set_aspect("equal")
+    axis_setup()
+    add_data()
+
+    if interactive:
+
+        def onclick(event):
+            axes[0].cla()
+            axes[1].cla()
+            axis_setup()
+            add_data()
+
+            fig.canvas.draw()
+
+        cid = fig.canvas.mpl_connect("button_press_event", onclick)
 
     plt.show()
