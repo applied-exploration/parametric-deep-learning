@@ -4,7 +4,7 @@ import random
 from dataclasses import dataclass
 import numpy as np
 from abc import ABC
-from typing import Union, Type
+from typing import Union, Type, Optional
 import matplotlib.patches as mpatches
 
 
@@ -321,8 +321,8 @@ class Rotate(Modifier):
 
 @dataclass(frozen=True)
 class Constraint(Modifier):
-    x: float
-    y: float
+    x: Optional[float]
+    y: Optional[float]
     indicies: tuple[int, int]
     name: str = "CONSTRAINT"
 
@@ -333,10 +333,17 @@ class Constraint(Modifier):
         obj_a = primitives[self.indicies[0]]
         obj_b = primitives[self.indicies[1]]
 
-        constraint_vector = np.array([self.x, self.y])
+        con_x, con_y = self.x, self.y
+
         difference_vector = np.array(obj_b.get_position()) - np.array(
             obj_a.get_position()
         )
+        if self.x is None:
+            con_x = difference_vector[0]
+        if self.y is None:
+            con_y = difference_vector[1]
+
+        constraint_vector = np.array([con_x, con_y])
         move_vector = difference_vector - constraint_vector
 
         x, y = obj_b.get_position()
@@ -397,3 +404,4 @@ class DataConfig:
     max_definition_len: int
     primitive_types: list[Type[Primitive]]
     modifier_types: list[Type[Modifier]]
+    name: str
