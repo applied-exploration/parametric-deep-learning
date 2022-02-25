@@ -15,7 +15,6 @@ from data.types import (
 )
 
 
-
 def _random_radius(config: DataConfig) -> float:
     return min(
         config.max_radius, max(config.min_radius, random.random() * config.max_radius)
@@ -27,6 +26,7 @@ def _random_translation(config: DataConfig) -> tuple[float, float]:
         random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
         random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
     )
+
 
 def _random_index(num_primitives: int) -> int:
     return random.randint(0, num_primitives - 1)
@@ -80,14 +80,24 @@ def map_primitives(config: DataConfig, primitives_to_use: list) -> Primitives:
 def map_modifiers(config: DataConfig, modifiers_to_use: list) -> Modifiers:
     modifiers: Modifiers = []
 
-    constraint_present = None
+    constraint_present = []
     for i, modifier in enumerate(modifiers_to_use):
         if isinstance(Constraint(0, 0, (0, 0)), modifier):
-            constraint_present = Constraint(
-                x=random.random() * config.canvas_size / 3,
-                y=0,
-                indicies=_random_indecies(config.num_primitives),
-            )
+            if len(constraint_present) == 0:
+                constraint_present.append(
+                    Constraint(
+                        x=random.random() * config.canvas_size / 3,
+                        y=0,
+                        indicies=_random_indecies(config.num_primitives),
+                    )
+                )
+            else:
+                constraint_present.append(
+                    Translate(
+                        *_random_translation(config),
+                        index=_random_index(config.num_primitives)
+                    )
+                )
             continue
 
         elif isinstance(Rotate(0, 0), modifier):
@@ -103,6 +113,6 @@ def map_modifiers(config: DataConfig, modifiers_to_use: list) -> Modifiers:
         modifiers.append(new_modifier)
 
     if constraint_present is not None:
-        modifiers.append(constraint_present)  # place modifiers as the last object
+        modifiers.extend(constraint_present)  # place modifiers as the last object
 
     return modifiers
