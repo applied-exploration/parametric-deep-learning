@@ -42,40 +42,23 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
     plt.show()
 
 
-def display_both2(
-    points: list[Point], rendered_primitives: Primitives, config: DataConfig
-) -> None:
-    fig, axes = plt.subplots(ncols=2)
-    for ax in axes:
-        ax.set(adjustable="box", aspect="equal")
-        ax.set_xlim(-config.canvas_size / 2, config.canvas_size / 2)
-        ax.set_ylim(-config.canvas_size / 2, config.canvas_size / 2)
-
-    cmap = plt.cm.get_cmap(plt.cm.viridis, 143).colors
-
-    for i, point in enumerate(points):
-        axes[0].scatter(point[0], point[1])
-
-    for i, primitive in enumerate(rendered_primitives):
-        axes[1].add_patch(primitive.render())
-
-    plt.show()
-
-
 def display_both(
-    points: list[list[Point]], rendered_primitives: list[Primitives],  config: DataConfig, interactive:bool =False
+    points: list[list[Point]],
+    rendered_primitives: list[Primitives],
+    config: DataConfig,
+    interactive: bool = False,
 ) -> None:
     fig, axes = plt.subplots(ncols=2)
-    
+
     def axis_setup():
         for ax in axes:
             ax.set(adjustable="box", aspect="equal")
             ax.set_xlim(-config.canvas_size / 2, config.canvas_size / 2)
             ax.set_ylim(-config.canvas_size / 2, config.canvas_size / 2)
 
-
     ys_points = itertools.cycle(points)
     ys_primitives = itertools.cycle(rendered_primitives)
+
     def add_data():
         for i, point in enumerate(next(ys_points)):
             axes[0].scatter(point[0], point[1])
@@ -85,8 +68,9 @@ def display_both(
 
     axis_setup()
     add_data()
-    
+
     if interactive:
+
         def onclick(event):
             axes[0].cla()
             axes[1].cla()

@@ -58,7 +58,7 @@ dataconfig_1 = DataConfig(
 )
 dataconfig_2 = DataConfig(
     canvas_size=100,
-    dataset_size=3,
+    dataset_size=1000,
     min_radius=9,
     max_radius=20,
     num_sample_points=50,
