@@ -50,6 +50,8 @@ def display_both(
 ) -> None:
     fig, axes = plt.subplots(ncols=2)
 
+    # programs_unzipped = list(map(list, zip(*rendered_primitives)))
+
     def axis_setup():
         for ax in axes:
             ax.set(adjustable="box", aspect="equal")
@@ -60,11 +62,26 @@ def display_both(
     ys_primitives = itertools.cycle(rendered_primitives)
 
     def add_data():
+        next_element = next(ys_primitives)
+        primitives = next_element[0]
+        program_str = next_element[1]
+
         for i, point in enumerate(next(ys_points)):
             axes[0].scatter(point[0], point[1])
 
-        for i, primitive in enumerate(next(ys_primitives)):
+        for i, primitive in enumerate(primitives):
             axes[1].add_patch(primitive.render())
+
+        props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
+        axes[1].text(
+            -0.15,
+            -0.25,
+            program_str,
+            transform=axes[1].transAxes,
+            fontsize=14,
+            verticalalignment="top",
+            bbox=props,
+        )
 
     axis_setup()
     add_data()

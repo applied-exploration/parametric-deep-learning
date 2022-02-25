@@ -42,8 +42,6 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
         """ 1. Apply modifiers """
         instructions: list[Instruction] = [*primitives, *modifiers]
         primitives, modifiers = render(instructions)
-        if display_plot:
-            all_programs.append(primitives)
 
         """ 2. Sample operations """
         plain_samples = []
@@ -53,11 +51,13 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
                 plain_samples.extend([(x, y)])
 
         all_features.append(plain_samples)
-        features_collapsed = "".join(
+        features_collapsed: str = "".join(
             [str(x) + " " + str(y) + "\n" for x, y in plain_samples]
         )
-        labels_collapsed = write_definition(primitives, modifiers)
+        labels_collapsed: str = write_definition(primitives, modifiers)
 
+        if display_plot:
+            all_programs.append((primitives, labels_collapsed))
         data.append([features_collapsed, labels_collapsed])
 
     if display_plot:
