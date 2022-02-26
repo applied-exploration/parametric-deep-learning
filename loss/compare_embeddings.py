@@ -1,8 +1,8 @@
 from torch import Tensor
 from typing import Callable
 from data.types import DataConfig
-from embedding.instructions import from_embeddings_to_instructions
 from torch.nn import functional as F
+import torch
 
 
 def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
@@ -22,11 +22,12 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
             target.shape[0], no_of_instructions, dataconfig.instruction_embedding_size
         )
 
-        index_instructions_end = 3
+        index_instructions_end = len(dataconfig.instructions_map)
         input_instruction_types = input_per_instruction[:, :, :index_instructions_end]
         target_instruction_types = target_per_instruction[:, :, :index_instructions_end]
         loss_instructions_types = F.cross_entropy(
-            input_instruction_types, target_instruction_types
+            input_instruction_types,
+            target_instruction_types,
         )
 
         index_parameters_end = index_instructions_end + 3
@@ -36,7 +37,10 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
         target_parameters = target_per_instruction[
             :, :, index_instructions_end:index_parameters_end
         ]
-        loss_parameters = F.mse_loss(input_parameters, target_parameters)
+        padding_mask = (target_parameters != -1.0).int()
+        input_parameters = input_parameters * padding_mask
+        target_parameters = target_parameters * padding_mask
+        loss_parameters = F.mse_loss(input_parameters, target_parameters) * 50
 
         index_index1_end = index_parameters_end + dataconfig.max_definition_len
         input_index1 = input_per_instruction[
@@ -45,21 +49,21 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
         target_index1 = target_per_instruction[
             :, :, index_parameters_end:index_index1_end
         ]
-        # if target is "padding" (all zeros), then we should zero out the loss, as it doesn't matter
-        if target_index1 == [-1] * dataconfig.max_definition_len:
-            loss_index1 = Tensor([0.0])
-        else:
-            loss_index1 = F.cross_entropy(input_index1, target_index1)
+
+        loss_index1 = F.cross_entropy(
+            input_index1.view(-1, dataconfig.max_definition_len),
+            torch.argmax(target_index1.view(-1, dataconfig.max_definition_len), dim=1),
+            ignore_index=0,
+        )
 
         index_index2_end = index_parameters_end + (dataconfig.max_definition_len * 2)
         input_index2 = input_per_instruction[:, :, index_index1_end:index_index2_end]
         target_index2 = target_per_instruction[:, :, index_index1_end:index_index2_end]
-        loss_index2 = F.cross_entropy(input_index2, target_index2)
-        # if target is "padding" (all zeros), then we should zero out the loss, as it doesn't matter
-        if target_index1 == [-1] * dataconfig.max_definition_len:
-            loss_index1 = Tensor([0.0])
-        else:
-            loss_index1 = F.cross_entropy(input_index1, target_index1)
+        loss_index2 = F.cross_entropy(
+            input_index2.view(-1, dataconfig.max_definition_len),
+            torch.argmax(target_index2.view(-1, dataconfig.max_definition_len), dim=1),
+            ignore_index=0,
+        )
 
         return loss_instructions_types + loss_parameters + loss_index1 + loss_index2
 
