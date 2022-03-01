@@ -65,6 +65,14 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
             ignore_index=0,
         )
 
-        return loss_instructions_types + loss_parameters + loss_index1 + loss_index2
+        index_angle_end = index_index2_end + 1
+        input_angle = input_per_instruction[:, :, index_index2_end:index_angle_end]
+        target_angle = target_per_instruction[:, :, index_index2_end:index_angle_end]
+        padding_mask = (target_angle != -1.0).int()
+        input_angle = input_angle * padding_mask
+        target_angle = target_angle * padding_mask
+        loss_angle = F.mse_loss(input_angle, target_angle) * 50
+
+        return loss_instructions_types + loss_parameters + loss_index1 + loss_index2 + loss_angle
 
     return __compare_embedded_instructions_loss
