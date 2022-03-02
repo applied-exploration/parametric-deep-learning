@@ -22,7 +22,49 @@ from render.render import render
 from data.utils import write_definition, map_primitives, map_modifiers
 
 
-def generator(name: str, config: DataConfig, display_plot: bool = False):
+def random_dataset(config: DataConfig):
+    primitives_to_use = random.choices(config.primitive_types, k=config.num_primitives)
+    modifiers_to_use = random.choices(config.modifier_types, k=config.num_modifiers)
+
+    primitives: Primitives = map_primitives(config, primitives_to_use)
+    modifiers: Modifiers = map_modifiers(config, modifiers_to_use)
+
+    return primitives, modifiers
+
+
+def faces_dataset(config: DataConfig):
+    primitives_to_use = random.choices(config.primitive_types, k=config.num_primitives)
+    modifiers_to_use = config.modifier_types
+
+    primitives: Primitives = map_primitives(
+        config,
+        primitives_to_use,
+        initial_translation=[(0, 0) for _ in range(config.num_primitives)],
+        initial_size=[config.max_radius for _ in range(config.num_primitives)],
+    )
+    modifiers: Modifiers = [
+        Translate(
+            random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
+            random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
+            0,
+        ),
+        Constraint(random.random() * config.canvas_size / 3, 0.0, (0, 1)),
+        Constraint(0.0, random.random() * config.canvas_size / 3, (1, 2)),
+    ]  # map_modifiers(config, modifiers_to_use)
+
+    return primitives, modifiers
+
+
+def choose_structure(config: DataConfig):
+    if config.name == "random":
+        primitives, modifiers = random_dataset(config)
+    else:  # config.name == 'faces':
+        primitives, modifiers = faces_dataset(config)
+
+    return primitives, modifiers
+
+
+def generator(config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
     data, all_features, all_programs = [], [], []
 
@@ -31,13 +73,7 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
 
     for _ in tqdm(range(config.dataset_size)):
         """0. Prepare the primitives and modifiers"""
-        primitives_to_use = random.choices(
-            config.primitive_types, k=config.num_primitives
-        )
-        modifiers_to_use = random.choices(config.modifier_types, k=config.num_modifiers)
-
-        primitives: Primitives = map_primitives(config, primitives_to_use)
-        modifiers: Modifiers = map_modifiers(config, modifiers_to_use)
+        primitives, modifiers = choose_structure(config)
 
         """ 1. Apply modifiers """
         instructions: list[Instruction] = [*primitives, *modifiers]
@@ -64,4 +100,4 @@ def generator(name: str, config: DataConfig, display_plot: bool = False):
         display_both(all_features, all_programs, config, interactive=True)
 
     df = pd.DataFrame(data, columns=column_names)
-    df.to_csv("data/{}.csv".format(name), index=True)
+    df.to_csv("generated/data/{}.csv".format(config.name), index=True)

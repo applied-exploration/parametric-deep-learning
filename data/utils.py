@@ -56,21 +56,27 @@ def write_definition(primitives: Primitives, modifiers: Modifiers) -> str:
     return labels_collapsed
 
 
-def map_primitives(config: DataConfig, primitives_to_use: list) -> Primitives:
+def map_primitives(
+    config: DataConfig,
+    primitives_to_use: list,
+    initial_translation: list[tuple[float, float]] = None,
+    initial_size: list[float] = None,
+) -> Primitives:
+    if initial_translation is None:
+        initial_translation = [
+            _random_translation(config) for _ in range(len(primitives_to_use))
+        ]
+    if initial_size is None:
+        initial_size = [_random_radius(config) for _ in range(len(primitives_to_use))]
+
     primitives: Primitives = []
-    for primitive in primitives_to_use:
+    for i, primitive in enumerate(primitives_to_use):
         if isinstance(Circle(0, 0, 0, 0), primitive):
-            new_primitive = Circle(
-                _random_radius(config), *_random_translation(config), 0
-            )
+            new_primitive = Circle(initial_size[i], *initial_translation[i], 0)
         elif isinstance(Square(0, 0, 0, 0), primitive):
-            new_primitive = Square(
-                _random_radius(config), *_random_translation(config), 0
-            )
+            new_primitive = Square(initial_size[i], *initial_translation[i], 0)
         elif isinstance(Triangle(0, 0, 0, 0), primitive):
-            new_primitive = Triangle(
-                _random_radius(config), *_random_translation(config), 0
-            )
+            new_primitive = Triangle(initial_size[i], *initial_translation[i], 0)
         else:
             continue
         primitives.append(new_primitive)
