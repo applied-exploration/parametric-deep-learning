@@ -41,15 +41,14 @@ def __embed_instruction(
     """Embed an instruction into a tensor.
     1. The first n dimensions are one-hot encoded versions of the type.
     2. The next three dimensions are quantized continuous parameters (padded if not present).
-    3. The (2 * max_definition_len) dimensions are indicies of nodes (parameters to constraint) one-hot encoded.
+    3. The (2 * max_definition_len + 1) dimensions are indicies of nodes (parameters to constraint) one-hot encoded.
     4. The last dimension is quantized angle parameters (padded if not present).
 
     [0,0,1,  0.1,0.2,0.3,  0,0,0,0,0,0,0,0,0,1 0,0,0,0,0,0,0,0,1,0,  0.05]
        1.         2.                        3.                         4.
     """
-    quantize_bins = 100
-    parameter_padding = torch.Tensor([0.0])
-    index_padding = torch.Tensor([0.0] * dataconfig.max_definition_len)
+    parameter_padding = torch.Tensor([-1.0])
+    index_padding = to_onehot(0, dataconfig.max_definition_len + 1)
     instruction_type = to_onehot(
         all_instructions[type(instruction)], len(all_instructions)
     )
@@ -99,7 +98,7 @@ def __embed_instruction(
                 x,
                 y,
                 parameter_padding,
-                to_onehot(instruction.index, dataconfig.max_definition_len),
+                to_onehot(instruction.index, dataconfig.max_definition_len + 1),
                 index_padding,
                 parameter_padding,
             ],
@@ -116,8 +115,8 @@ def __embed_instruction(
                 x,
                 y,
                 parameter_padding,
-                to_onehot(index1, dataconfig.max_definition_len),
-                to_onehot(index2, dataconfig.max_definition_len),
+                to_onehot(index1, dataconfig.max_definition_len + 1),
+                to_onehot(index2, dataconfig.max_definition_len + 1),
                 parameter_padding,
             ],
             dim=0,
@@ -125,7 +124,7 @@ def __embed_instruction(
 
     elif isinstance(instruction, Rotate):
         angle = quantize(instruction.angle, dataconfig.canvas_size)
-        index = to_onehot(instruction.index, dataconfig.max_definition_len)
+        index = to_onehot(instruction.index, dataconfig.max_definition_len + 1)
 
         return torch.cat(
             [
@@ -190,7 +189,8 @@ def from_embeddings_to_instructions(dataconfig: DataConfig) -> Callable:
                             parameters_start_from
                             + 3 : parameters_start_from
                             + 3
-                            + dataconfig.max_definition_len,
+                            + dataconfig.max_definition_len
+                            + 1,
                         ]
                     ),
                 )
@@ -203,14 +203,16 @@ def from_embeddings_to_instructions(dataconfig: DataConfig) -> Callable:
                         from_onehot(
                             embedding[
                                 indicies_start_from : indicies_start_from
-                                + dataconfig.max_definition_len,
+                                + dataconfig.max_definition_len
+                                + 1,
                             ]
                         ),
                         from_onehot(
                             embedding[
                                 indicies_start_from
-                                + dataconfig.max_definition_len : indicies_start_from
-                                + (dataconfig.max_definition_len * 2),
+                                + dataconfig.max_definition_len
+                                + 1 : indicies_start_from
+                                + ((dataconfig.max_definition_len + 1) * 2),
                             ]
                         ),
                     ),
@@ -221,7 +223,8 @@ def from_embeddings_to_instructions(dataconfig: DataConfig) -> Callable:
                     index=from_onehot(
                         embedding[
                             indicies_start_from : indicies_start_from
-                            + dataconfig.max_definition_len,
+                            + dataconfig.max_definition_len
+                            + 1,
                         ]
                     ),
                     angle=embedding[-1] * 360,

@@ -11,11 +11,10 @@ from utils.parse import parse_points, parse_program
 from config import ProgramSynthesisTask, dataconfig
 from utils.scoring import score_programs
 from render.visualize import visualize
-from data.types import all_instructions
+from loss.compare_embeddings import compare_embedded_instructions_loss
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
-    instructions_map=all_instructions,
     parse_input=parse_points,
     parse_program=parse_program,
     embed_input=embed_and_normalize_points(dataconfig),
@@ -27,9 +26,9 @@ task = ProgramSynthesisTask(
             hidden_layers_ratio=[1.0, 2.0, 1.0, 0.5],
             dropout_ratio=0.1,
             probabilities=False,
-            loss_function=F.mse_loss,
+            loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=250,
+        max_epochs=150,
     ),
     visualize=visualize(dataconfig),
 )
