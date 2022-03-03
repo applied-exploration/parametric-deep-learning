@@ -42,7 +42,7 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
         target_parameters = target_parameters * padding_mask
         loss_parameters = F.mse_loss(input_parameters, target_parameters) * 50
 
-        index_index1_end = index_parameters_end + dataconfig.max_definition_len
+        index_index1_end = index_parameters_end + dataconfig.num_primitives
         input_index1 = input_per_instruction[
             :, :, index_parameters_end:index_index1_end
         ]
@@ -51,17 +51,17 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
         ]
 
         loss_index1 = F.cross_entropy(
-            input_index1.view(-1, dataconfig.max_definition_len),
-            torch.argmax(target_index1.view(-1, dataconfig.max_definition_len), dim=1),
+            input_index1.view(-1, dataconfig.num_primitives),
+            torch.argmax(target_index1.view(-1, dataconfig.num_primitives), dim=1),
             ignore_index=0,
         )
 
-        index_index2_end = index_parameters_end + (dataconfig.max_definition_len * 2)
+        index_index2_end = index_parameters_end + (dataconfig.num_primitives * 2)
         input_index2 = input_per_instruction[:, :, index_index1_end:index_index2_end]
         target_index2 = target_per_instruction[:, :, index_index1_end:index_index2_end]
         loss_index2 = F.cross_entropy(
-            input_index2.view(-1, dataconfig.max_definition_len),
-            torch.argmax(target_index2.view(-1, dataconfig.max_definition_len), dim=1),
+            input_index2.view(-1, dataconfig.num_primitives),
+            torch.argmax(target_index2.view(-1, dataconfig.num_primitives), dim=1),
             ignore_index=0,
         )
 
@@ -73,6 +73,12 @@ def compare_embedded_instructions_loss(dataconfig: DataConfig) -> Callable:
         target_angle = target_angle * padding_mask
         loss_angle = F.mse_loss(input_angle, target_angle) * 50
 
-        return loss_instructions_types + loss_parameters + loss_index1 + loss_index2 + loss_angle
+        return (
+            loss_instructions_types
+            + loss_parameters
+            + loss_index1
+            + loss_index2
+            + loss_angle
+        )
 
     return __compare_embedded_instructions_loss
