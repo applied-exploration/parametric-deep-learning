@@ -48,7 +48,6 @@ def faces_dataset(config: DataConfig):
     distance_mouth = random.uniform(-1.2, -1.5) * distance_eyes
     modifiers: Modifiers = [
         Translate(
-
             random.uniform(-1, 1) * ((config.canvas_size / 2) - distance_eyes),
             random.uniform(-1, 0) * (distance_mouth - config.max_radius),
             0,
@@ -113,4 +112,4 @@ def generator(config: DataConfig, display_plot: bool = False):
         display_both(all_features, all_programs, config, interactive=True)
 
     df = pd.DataFrame(data, columns=column_names)
-    df.to_csv("generated/data/{}.csv".format(config.name), index=True)
+    df.to_csv("data/generated/{}.csv".format(config.name), index=True)

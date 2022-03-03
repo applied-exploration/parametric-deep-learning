@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
 from matplotlib.widgets import Button
-from data.types import DataConfig, Primitives, Point
+from data.types import DataConfig, Primitives, Primitive, Point
 import numpy as np
 from typing import Union
 import itertools
@@ -45,7 +45,7 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
 
 def display_both(
     points: list[list[Point]],
-    rendered_primitives: list[Primitives],
+    rendered_primitives: list[tuple[Primitive, str]],
     config: DataConfig,
     interactive: bool = False,
 ) -> None:

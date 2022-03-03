@@ -8,10 +8,12 @@ from embedding import (
     from_embeddings_to_instructions,
 )
 from utils.parse import parse_points, parse_program
-from config import ProgramSynthesisTask, dataconfig
+from config import ProgramSynthesisTask, dataconfig_3
 from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
+
+dataconfig = dataconfig_3
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
@@ -31,12 +33,13 @@ task = ProgramSynthesisTask(
         max_epochs=1,
     ),
     visualize=visualize(dataconfig),
+    dataset_name=dataconfig.name,
 )
 
 
 def run_pipeline(task: ProgramSynthesisTask):
 
-    X_train, y_train, X_test, y_test = load_data()
+    X_train, y_train, X_test, y_test = load_data(task.dataset_name)
 
     X_train = [task.embed_input(task.parse_input(row)) for row in X_train]
     y_train = [task.embed_program(task.parse_program(row)) for row in y_train]
