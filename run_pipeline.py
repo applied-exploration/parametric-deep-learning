@@ -8,12 +8,12 @@ from embedding import (
     from_embeddings_to_instructions,
 )
 from utils.parse import parse_points, parse_program
-from config import ProgramSynthesisTask, dataconfig_3
+from config import ProgramSynthesisTask, dataconfig_basic
 from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
 
-dataconfig = dataconfig_3
+dataconfig = dataconfig_basic
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
@@ -26,11 +26,11 @@ task = ProgramSynthesisTask(
     model=LightningNeuralNetModel(
         MultiLayerPerceptron(
             hidden_layers_ratio=[1.0, 2.0, 1.0, 0.5],
-            dropout_ratio=0.1,
+            dropout_ratio=0.0,
             probabilities=False,
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=500,
+        max_epochs=300,
     ),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
