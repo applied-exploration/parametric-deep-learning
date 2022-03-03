@@ -338,17 +338,18 @@ class Constraint(Modifier):
         difference_vector = np.array(obj_b.get_position()) - np.array(
             obj_a.get_position()
         )
-        if self.x is None:
-            con_x = difference_vector[0]
-        if self.y is None:
-            con_y = difference_vector[1]
 
-        constraint_vector = np.array([con_x, con_y])
+        constraint_vector = np.array(
+            [con_x if con_x is not None else 0.0, con_y if con_y is not None else 0.0]
+        )
         move_vector = difference_vector - constraint_vector
 
         x, y = obj_b.get_position()
-        x = x - move_vector[0]
-        y = y - move_vector[1]
+
+        if self.x is not None:
+            x = x - move_vector[0]
+        if self.y is not None:
+            y = y - move_vector[1]
 
         new_obj_a = type(obj_a)(**obj_a.get_params_dict())  # type: ignore
 

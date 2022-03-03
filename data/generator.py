@@ -42,14 +42,26 @@ def faces_dataset(config: DataConfig):
         initial_translation=[(0, 0) for _ in range(config.num_primitives)],
         initial_size=[config.max_radius for _ in range(config.num_primitives)],
     )
+    distance_eyes = max(
+        config.max_radius * 1.1, random.uniform(0.25, 0.75) * config.canvas_size / 2
+    )
+    distance_mouth = random.uniform(-1.2, -1.5) * distance_eyes
     modifiers: Modifiers = [
         Translate(
-            random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
-            random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
+            random.uniform(-1, 1) * ((config.canvas_size / 2) - distance_eyes),
+            random.uniform(-1, 0) * (distance_mouth - config.max_radius),
             0,
         ),
-        Constraint(random.random() * config.canvas_size / 3, 0.0, (0, 1)),
-        Constraint(0.0, random.random() * config.canvas_size / 3, (1, 2)),
+        Constraint(
+            distance_eyes,
+            0.0,
+            (0, 1),
+        ),
+        Constraint(
+            -distance_eyes / 2,
+            distance_mouth,
+            (1, 2),
+        ),
     ]  # map_modifiers(config, modifiers_to_use)
 
     return primitives, modifiers

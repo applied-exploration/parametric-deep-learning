@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
+from matplotlib.widgets import Button
 from data.types import DataConfig, Primitives, Point
 import numpy as np
 from typing import Union
@@ -88,14 +89,24 @@ def display_both(
 
     if interactive:
 
-        def onclick(event):
-            axes[0].cla()
-            axes[1].cla()
-            axis_setup()
-            add_data()
+        class Index:
+            ind = 0
 
-            fig.canvas.draw()
+            def next(self, event):
+                axes[0].cla()
+                axes[1].cla()
+                axis_setup()
+                add_data()
+                plt.draw()
+                # fig.canvas.draw()
 
-        cid = fig.canvas.mpl_connect("button_press_event", onclick)
+        axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
+        callback = Index()
+        bnext = Button(axnext, "Next")
+        bnext.on_clicked(callback.next)
+        # bprev = Button(axprev, 'Previous')
+        # bprev.on_clicked(callback.prev)
 
-    plt.show()
+        # cid = fig.canvas.mpl_connect("button_press_event", onclick)
+
+    plt.show(block=True)

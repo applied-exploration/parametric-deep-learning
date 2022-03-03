@@ -43,7 +43,6 @@ dataconfig = DataConfig(
     modifier_types=[Translate],
     instructions_map=all_instructions,
     name="test",
-
 )
 
 dataconfig_1 = DataConfig(
@@ -60,8 +59,7 @@ dataconfig_1 = DataConfig(
     primitive_types=[Circle],
     modifier_types=[Translate],
     instructions_map=all_instructions,
-    name="dataset1"
-    
+    name="dataset1",
 )
 dataconfig_2 = DataConfig(
     canvas_size=100,
@@ -83,15 +81,15 @@ dataconfig_2 = DataConfig(
 dataconfig_3 = DataConfig(
     canvas_size=100,
     dataset_size=1000,
-    min_radius=9,
-    max_radius=15,
+    min_radius=3,
+    max_radius=6,
     num_sample_points=50,
     num_primitives=3,
     random_primitives=False,
     num_modifiers=3,
     instruction_embedding_size=26,
     max_definition_len=10,  # maximum length of the program - we need this to know how many objects can be referenced in constraints
-    primitive_types=[Square, Triangle, Circle],
+    primitive_types=[Square, Circle, Triangle],
     modifier_types=[Translate, Constraint, Constraint],
     instructions_map=all_instructions,
     name="faces",
