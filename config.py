@@ -94,9 +94,9 @@ dataconfig_3 = DataConfig(
 
 dataconfig_basic = DataConfig(
     canvas_size=100,
-    dataset_size=10000,
+    dataset_size=1000,
     min_radius=3,
-    max_radius=6,
+    max_radius=20,
     num_sample_points=50,
     num_primitives=1,
     random_primitives=False,
