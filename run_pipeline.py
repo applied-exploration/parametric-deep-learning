@@ -28,7 +28,7 @@ task = ProgramSynthesisTask(
             probabilities=False,
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=150,
+        max_epochs=1,
     ),
     visualize=visualize(dataconfig),
 )
