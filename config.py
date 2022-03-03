@@ -26,6 +26,7 @@ class ProgramSynthesisTask:
     scorer: Callable
     model: Model
     visualize: Optional[Callable]
+    dataset_name: str
 
 
 dataconfig = DataConfig(

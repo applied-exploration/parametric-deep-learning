@@ -112,4 +112,4 @@ def generator(config: DataConfig, display_plot: bool = False):
         display_both(all_features, all_programs, config, interactive=True)
 
     df = pd.DataFrame(data, columns=column_names)
-    df.to_csv("generated/data/{}.csv".format(config.name), index=True)
+    df.to_csv("data/generated/{}.csv".format(config.name), index=True)

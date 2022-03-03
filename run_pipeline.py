@@ -33,12 +33,13 @@ task = ProgramSynthesisTask(
         max_epochs=500,
     ),
     visualize=visualize(dataconfig),
+    dataset_name=dataconfig.name,
 )
 
 
 def run_pipeline(task: ProgramSynthesisTask):
 
-    X_train, y_train, X_test, y_test = load_data()
+    X_train, y_train, X_test, y_test = load_data(task.dataset_name)
 
     X_train = [task.embed_input(task.parse_input(row)) for row in X_train]
     y_train = [task.embed_program(task.parse_program(row)) for row in y_train]
