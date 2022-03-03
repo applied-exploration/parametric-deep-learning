@@ -48,7 +48,8 @@ def faces_dataset(config: DataConfig):
     distance_mouth = random.uniform(-1.2, -1.5) * distance_eyes
     modifiers: Modifiers = [
         Translate(
-            random.uniform(-1, 1) * ((config.canvas_size / 2) - distance_eyes),
+            random.uniform(-1, 1)
+            * ((config.canvas_size / 2) - (distance_eyes + config.max_radius)),
             random.uniform(-1, 0) * (distance_mouth - config.max_radius),
             0,
         ),
