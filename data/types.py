@@ -402,7 +402,6 @@ class DataConfig:
     random_primitives: bool
     num_modifiers: int
     instruction_embedding_size: int
-    max_definition_len: int
     primitive_types: list[Type[Primitive]]
     modifier_types: list[Type[Modifier]]
     instructions_map: dict

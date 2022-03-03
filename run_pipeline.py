@@ -8,10 +8,12 @@ from embedding import (
     from_embeddings_to_instructions,
 )
 from utils.parse import parse_points, parse_program
-from config import ProgramSynthesisTask, dataconfig
+from config import ProgramSynthesisTask, dataconfig_3
 from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
+
+dataconfig = dataconfig_3
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
@@ -28,7 +30,7 @@ task = ProgramSynthesisTask(
             probabilities=False,
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=1,
+        max_epochs=500,
     ),
     visualize=visualize(dataconfig),
 )
