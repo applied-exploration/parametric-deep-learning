@@ -17,14 +17,17 @@ import torch
 from wandb_setup import get_wandb
 
 dataconfig = dataconfig_basic
+
 mlp_model = MultiLayerPerceptron(
     hidden_layers_ratio=[1.0, 2.0],
     dropout_ratio=0.1,
     loss_function=compare_embedded_instructions_loss(dataconfig),
 )
+
 conv_model = (
     ConvolutionalModel(
         loss_function=compare_embedded_instructions_loss(dataconfig),
+        embedding_size=(dataconfig.num_modifiers, 3),
     ),
 )
 
