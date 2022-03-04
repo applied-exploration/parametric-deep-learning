@@ -300,7 +300,9 @@ class Translate(Modifier):
         self,
         primitives: list[Primitive],
     ) -> list[Primitive]:
-        assert self.index < len(primitives), "This primitve does not exist"
+        if self.index >= len(primitives):
+            print("This primitve does not exist")
+            return primitives
 
         obj = primitives[self.index]
         obj_pos = obj.get_position()
@@ -340,7 +342,9 @@ class Rotate(Modifier):
         self,
         primitives: list[Primitive],
     ) -> list[Primitive]:
-        assert self.index < len(primitives), "This primitve does not exist"
+        if self.index >= len(primitives):
+            print("This primitve does not exist")
+            return primitives
 
         obj = primitives[self.index]
         x, y = obj.get_position()

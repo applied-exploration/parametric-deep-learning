@@ -18,7 +18,7 @@ dataconfig = dataconfig_basic
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
-    parse_input=parse_grid,
+    parse_input=parse_grid(dataconfig),
     parse_program=parse_program,
     embed_input=embed_grid(dataconfig),
     embed_program=embed_instructions(dataconfig),

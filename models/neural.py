@@ -7,9 +7,9 @@ import torch
 
 
 class LightningNeuralNetModel(Model):
-    def __init__(self, model, max_epochs=5):
+    def __init__(self, model, max_epochs):
         self.model = model
-        self.trainer = pl.Trainer(max_epochs=max_epochs)
+        self.trainer = pl.Trainer(max_epochs=max_epochs, check_val_every_n_epoch=5)
 
     def fit(
         self,

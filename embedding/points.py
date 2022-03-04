@@ -5,7 +5,7 @@ from typing import Callable
 
 def embed_grid(dataconfig: DataConfig) -> Callable:
     def _embed_grid(input: list[int]) -> torch.Tensor:
-        return torch.Tensor(input).view(dataconfig.canvas_size, dataconfig.canvas_size)
+        return torch.Tensor(input)
 
     return _embed_grid
 
