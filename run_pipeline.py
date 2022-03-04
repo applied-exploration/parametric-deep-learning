@@ -17,19 +17,15 @@ import torch
 from wandb_setup import get_wandb
 
 dataconfig = dataconfig_basic
-mlp_model = LightningNeuralNetModel(
-    MultiLayerPerceptron(
-        hidden_layers_ratio=[1.0, 2.0],
-        dropout_ratio=0.1,
-        loss_function=compare_embedded_instructions_loss(dataconfig),
-    ),
-    max_epochs=150,
+mlp_model = MultiLayerPerceptron(
+    hidden_layers_ratio=[1.0, 2.0],
+    dropout_ratio=0.1,
+    loss_function=compare_embedded_instructions_loss(dataconfig),
 )
-conv_model = LightningNeuralNetModel(
+conv_model = (
     ConvolutionalModel(
         loss_function=compare_embedded_instructions_loss(dataconfig),
     ),
-    max_epochs=2,
 )
 
 
@@ -41,7 +37,7 @@ task = ProgramSynthesisTask(
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
-    model=conv_model,
+    model=LightningNeuralNetModel(conv_model, max_epochs=2),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
 )
