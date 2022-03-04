@@ -28,7 +28,7 @@ task = ProgramSynthesisTask(
         ConvolutionalModel(
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=1,
+        max_epochs=100,
     ),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
@@ -37,15 +37,17 @@ task = ProgramSynthesisTask(
 
 def run_pipeline(task: ProgramSynthesisTask):
 
-    X_train, y_train, X_test, y_test = load_data(task.dataset_name)
+    X_train, y_train, X_val, y_val, X_test, y_test = load_data(task.dataset_name)
 
     X_train = [task.embed_input(task.parse_input(row)) for row in X_train]
     y_train = [task.embed_program(task.parse_program(row)) for row in y_train]
+    X_val = [task.embed_input(task.parse_input(row)) for row in X_val]
+    y_val = [task.embed_program(task.parse_program(row)) for row in y_val]
     X_test_without_embedding = [task.parse_input(row) for row in X_test]
     X_test = [task.embed_input(row) for row in X_test_without_embedding]
     y_test = [task.parse_program(row) for row in y_test]
 
-    task.model.fit(X_train, y_train)
+    task.model.fit(X_train, y_train, X_val, y_val)
     output = task.model.predict(torch.stack(X_test, dim=0))
     output_programs = task.embedding_to_program(output)
 

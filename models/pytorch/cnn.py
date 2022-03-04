@@ -20,14 +20,23 @@ class ConvolutionalModel(pl.LightningModule):
         x = self.feature_extractor(x.unsqueeze(dim=1))
         x = x.view(x.size(0), -1)
         output = self.out(x)
-        return output 
+        return output
 
     def training_step(self, batch):
         x, y = batch
         logits = self(x)
         loss = self.loss_function(logits, y)
 
-        self.log("train_loss", loss, on_step=True, on_epoch=True, logger=True)
+        self.log("train_loss", loss, on_step=False, on_epoch=True, logger=True)
+
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self(x)
+        loss = self.loss_function(logits, y)
+
+        self.log("val_loss", loss, on_step=True, on_epoch=True, logger=True)
 
         return loss
 
