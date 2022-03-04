@@ -30,7 +30,7 @@ task = ProgramSynthesisTask(
             probabilities=False,
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=300,
+        max_epochs=100,
     ),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
