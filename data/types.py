@@ -68,7 +68,7 @@ class Circle(Primitive):
         im = Image.new("RGB", (width, height), (0, 0, 0))
         draw = ImageDraw.Draw(im)
         half_size = self.r / 2
-        draw.rectangle(
+        draw.ellipse(
             (
                 self.x - half_size,
                 self.y - half_size,
