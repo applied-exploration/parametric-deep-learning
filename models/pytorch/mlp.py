@@ -1,30 +1,26 @@
 import torch
 from torch import nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, random_split
 import pytorch_lightning as pl
 import math
-import numpy as np
 import torch
+from typing import Callable
 
 
 class MultiLayerPerceptron(pl.LightningModule):
     def __init__(
         self,
-        hidden_layers_ratio: list[float] = [2.0, 2.0],
-        dropout_ratio: float = 0.0,
-        probabilities: bool = False,
-        loss_function=F.mse_loss,
+        hidden_layers_ratio: list[float],
+        dropout_ratio: float,
+        loss_function: Callable,
     ):
         super().__init__()
         self.hidden_layers_ratio = hidden_layers_ratio
-        self.probabilities = probabilities
         self.loss_function = loss_function
         self.dropout_ratio = dropout_ratio
 
-    def initialize_network(self, input_dim: int, output_dim: int) -> None:
+    def initialize_network(self, input_dim: tuple[int, int], output_dim: int) -> None:
         self.layers = nn.ModuleList()
-        current_dim = input_dim
+        current_dim = input_dim[0]
 
         for hdim in self.hidden_layers_ratio:
             hidden_layer_size = int(math.floor(current_dim * hdim))
@@ -42,9 +38,6 @@ class MultiLayerPerceptron(pl.LightningModule):
         for layer in self.layers:
             x = layer(x)
 
-        if self.probabilities:
-            x = F.softmax(x, dim=1)
-
         return x
 
     def training_step(self, batch: torch.Tensor, batch_idx):
@@ -56,10 +49,6 @@ class MultiLayerPerceptron(pl.LightningModule):
         loss = 0
         for layer in self.layers:
             x = layer(x.float())
-
-        if self.probabilities:
-            p = F.softmax(x, dim=1)
-            loss = F.nll_loss(torch.log(p), y.float())
 
         loss = self.loss_function(x, y.float())
 

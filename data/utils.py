@@ -23,8 +23,8 @@ def _random_radius(config: DataConfig) -> float:
 
 def _random_translation(config: DataConfig) -> tuple[float, float]:
     return (
-        random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
-        random.uniform(-1, 1) * (config.canvas_size / 2 - config.max_radius),
+        random.uniform(config.max_radius, config.canvas_size - config.max_radius),
+        random.uniform(config.max_radius, config.canvas_size - config.max_radius),
     )
 
 

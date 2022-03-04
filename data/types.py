@@ -4,8 +4,9 @@ import random
 from dataclasses import dataclass
 import numpy as np
 from abc import ABC
-from typing import Union, Type, Optional
+from typing import Type, Optional
 import matplotlib.patches as mpatches
+from PIL import Image, ImageDraw
 
 
 Point = tuple[float, float]
@@ -22,7 +23,7 @@ class Instruction(ABC):
 
 
 class Primitive(Instruction):
-    def get_random_point(self) -> tuple[float, float]:
+    def get_grid(self, width: int, height: int) -> np.ndarray:
         raise NotImplementedError()
 
     def get_position(self) -> tuple[float, float]:
@@ -62,6 +63,23 @@ class Circle(Primitive):
         y = math.sin(angle) * self.r + self.y
 
         return (x, y)
+
+    def get_grid(self, width: int, height: int) -> np.ndarray:
+        im = Image.new("RGB", (width, height), (0, 0, 0))
+        draw = ImageDraw.Draw(im)
+        half_size = self.r / 2
+        draw.rectangle(
+            (
+                self.x - half_size,
+                self.y - half_size,
+                self.x + half_size,
+                self.y + half_size,
+            ),
+            outline=(1, 1, 1),
+            width=1,
+        )
+        im = im.rotate(self.angle, center=(self.x, self.y), expand=False)
+        return np.array(im)[:, :, 0]
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.r, self.x, self.y, self.angle)
@@ -126,6 +144,23 @@ class Square(Primitive):
         x, y = _add_rotation(self.angle, x, y)
 
         return (x, y)
+
+    def get_grid(self, width: int, height: int) -> np.ndarray:
+        im = Image.new("RGB", (width, height), (0, 0, 0))
+        draw = ImageDraw.Draw(im)
+        half_size = self.size / 2
+        draw.rectangle(
+            (
+                self.x - half_size,
+                self.y - half_size,
+                self.x + half_size,
+                self.y + half_size,
+            ),
+            outline=(1, 1, 1),
+            width=1,
+        )
+        im = im.rotate(self.angle, center=(self.x, self.y), expand=False)
+        return np.array(im)[:, :, 0]
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.size, self.x, self.y, self.angle)
@@ -193,6 +228,22 @@ class Triangle(Primitive):
         x, y = _add_rotation(self.angle, x, y)
 
         return (x, y)
+
+    def get_grid(self, width: int, height: int) -> np.ndarray:
+        im = Image.new("RGB", (width, height), (0, 0, 0))
+        draw = ImageDraw.Draw(im)
+        half_size = self.size / 2
+        draw.polygon(
+            [
+                (self.x - half_size, self.y - half_size),
+                (self.x + half_size, self.y - half_size),
+                (self.x, self.y + half_size),
+            ],
+            outline=(1, 1, 1),
+            width=1,
+        )
+        im = im.rotate(self.angle, center=(self.x, self.y), expand=False)
+        return np.array(im)[:, :, 0]
 
     def get_params(self) -> tuple[float, float, float, float]:
         return (self.size, self.x, self.y, self.angle)

@@ -91,3 +91,19 @@ dataconfig_3 = DataConfig(
     instructions_map=all_instructions,
     name="faces",
 )
+
+dataconfig_basic = DataConfig(
+    canvas_size=100,
+    dataset_size=1000,
+    min_radius=3,
+    max_radius=20,
+    num_sample_points=50,
+    num_primitives=1,
+    random_primitives=False,
+    num_modifiers=0,
+    instruction_embedding_size=14,
+    primitive_types=[Square],
+    modifier_types=[],
+    instructions_map=all_instructions,
+    name="random",
+)

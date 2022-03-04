@@ -4,22 +4,18 @@ import random
 from tqdm import tqdm
 import numpy as np
 from data.types import (
-    Circle,
-    Square,
-    Triangle,
     Modifiers,
     Primitives,
     Translate,
-    Rotate,
     Constraint,
     DataConfig,
-    Program,
     Instruction,
 )
-from render.utils import display_features, display_program, display_both
+from render.utils import display_both
 from render.render import render
 
 from data.utils import write_definition, map_primitives, map_modifiers
+from PIL import Image, ImageDraw
 
 
 def random_dataset(config: DataConfig):
@@ -92,15 +88,18 @@ def generator(config: DataConfig, display_plot: bool = False):
         primitives, modifiers = render(instructions)
 
         """ 2. Sample operations """
-        plain_samples = []
-        for _ in range(config.num_sample_points):
-            for primitive in primitives:
-                x, y = primitive.get_random_point()
-                plain_samples.extend([(x, y)])
+        img = None
+        for primitive in primitives:
+            if img is None:
+                img = primitive.get_grid(config.canvas_size, config.canvas_size)
+            else:
+                img = np.maximum(
+                    img, primitive.get_grid(config.canvas_size, config.canvas_size)
+                )
 
-        all_features.append(plain_samples)
-        features_collapsed: str = "".join(
-            [str(x) + " " + str(y) + "\n" for x, y in plain_samples]
+        all_features.append(img)
+        features_collapsed: str = " ".join(
+            [" ".join([str(item) for item in row]) for row in img]
         )
         labels_collapsed: str = write_definition(primitives, modifiers)
 

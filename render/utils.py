@@ -6,6 +6,7 @@ from data.types import DataConfig, Primitives, Primitive, Point
 import numpy as np
 from typing import Union
 import itertools
+from PIL import Image, ImageDraw
 
 
 def display_features(objects: list, config: DataConfig) -> None:
@@ -20,8 +21,8 @@ def display_features(objects: list, config: DataConfig) -> None:
 
 
 def display_program(rendered_primitives: list, config: DataConfig) -> None:
-    plt.xlim(-config.canvas_size / 2, config.canvas_size)
-    plt.ylim(-config.canvas_size / 2, config.canvas_size)
+    plt.xlim(0, config.canvas_size)
+    plt.ylim(0, config.canvas_size)
     # plt.gca().set_aspect("equal")
 
     patches = []
@@ -44,7 +45,7 @@ def display_program(rendered_primitives: list, config: DataConfig) -> None:
 
 
 def display_both(
-    points: list[list[Point]],
+    grids: list[list[int]],
     rendered_primitives: list[tuple[Primitive, str]],
     config: DataConfig,
     interactive: bool = False,
@@ -56,10 +57,10 @@ def display_both(
     def axis_setup():
         for ax in axes:
             ax.set(adjustable="box", aspect="equal")
-            ax.set_xlim(-config.canvas_size / 2, config.canvas_size / 2)
-            ax.set_ylim(-config.canvas_size / 2, config.canvas_size / 2)
+            ax.set_xlim(0, config.canvas_size)
+            ax.set_ylim(0, config.canvas_size)
 
-    ys_points = itertools.cycle(points)
+    ys_grids = itertools.cycle(grids)
     ys_primitives = itertools.cycle(rendered_primitives)
 
     def add_data():
@@ -67,10 +68,10 @@ def display_both(
         primitives = next_element[0]
         program_str = next_element[1]
 
-        for i, point in enumerate(next(ys_points)):
-            axes[0].scatter(point[0], point[1])
+        grid = next(ys_grids)
+        axes[0].imshow(grid * 100, interpolation="nearest")
 
-        for i, primitive in enumerate(primitives):
+        for primitive in primitives:
             axes[1].add_patch(primitive.render())
 
         props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)

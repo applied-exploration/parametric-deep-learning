@@ -1,36 +1,34 @@
 from models.neural import LightningNeuralNetModel
-from models.pytorch.mlp import MultiLayerPerceptron
+from models.pytorch.cnn import ConvolutionalModel
 from data.data_loader import load_data
 import torch.nn.functional as F
 from embedding import (
-    embed_and_normalize_points,
+    embed_grid,
     embed_instructions,
     from_embeddings_to_instructions,
 )
-from utils.parse import parse_points, parse_program
-from config import ProgramSynthesisTask, dataconfig_3
+from utils.parse import parse_grid, parse_program
+from config import ProgramSynthesisTask, dataconfig_basic
 from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
+import torch
 
-dataconfig = dataconfig_3
+dataconfig = dataconfig_basic
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
-    parse_input=parse_points,
+    parse_input=parse_grid,
     parse_program=parse_program,
-    embed_input=embed_and_normalize_points(dataconfig),
+    embed_input=embed_grid(dataconfig),
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
     model=LightningNeuralNetModel(
-        MultiLayerPerceptron(
-            hidden_layers_ratio=[1.0, 2.0, 1.0, 0.5],
-            dropout_ratio=0.1,
-            probabilities=False,
+        ConvolutionalModel(
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=500,
+        max_epochs=1,
     ),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
@@ -48,7 +46,7 @@ def run_pipeline(task: ProgramSynthesisTask):
     y_test = [task.parse_program(row) for row in y_test]
 
     task.model.fit(X_train, y_train)
-    output = task.model.predict(X_test)
+    output = task.model.predict(torch.stack(X_test, dim=0))
     output_programs = task.embedding_to_program(output)
 
     score = score_programs(y_test, output_programs)
