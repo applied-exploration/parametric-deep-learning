@@ -9,7 +9,11 @@ import torch
 class LightningNeuralNetModel(Model):
     def __init__(self, model, max_epochs=5):
         self.model = model
-        self.trainer = pl.Trainer(max_epochs=max_epochs)
+
+        wandb_logger = pl.loggers.WandbLogger(
+            project="Parametric-Deep-Learning", log_model=True
+        )
+        self.trainer = pl.Trainer(logger=wandb_logger, max_epochs=max_epochs)
 
     def fit(self, X: list[torch.Tensor], y: list[torch.Tensor]) -> None:
         dataloader = get_dataloader(X, y)

@@ -1,5 +1,6 @@
 from models.neural import LightningNeuralNetModel
 from models.pytorch.cnn import ConvolutionalModel
+from models.pytorch.mlp import MultiLayerPerceptron
 from data.data_loader import load_data
 import torch.nn.functional as F
 from embedding import (
@@ -13,8 +14,24 @@ from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
 import torch
+from wandb_setup import get_wandb
 
 dataconfig = dataconfig_basic
+mlp_model = LightningNeuralNetModel(
+    MultiLayerPerceptron(
+        hidden_layers_ratio=[1.0, 2.0],
+        dropout_ratio=0.1,
+        loss_function=compare_embedded_instructions_loss(dataconfig),
+    ),
+    max_epochs=150,
+)
+conv_model = LightningNeuralNetModel(
+    ConvolutionalModel(
+        loss_function=compare_embedded_instructions_loss(dataconfig),
+    ),
+    max_epochs=2,
+)
+
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
@@ -24,18 +41,14 @@ task = ProgramSynthesisTask(
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
-    model=LightningNeuralNetModel(
-        ConvolutionalModel(
-            loss_function=compare_embedded_instructions_loss(dataconfig),
-        ),
-        max_epochs=1,
-    ),
+    model=conv_model,
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
 )
 
 
 def run_pipeline(task: ProgramSynthesisTask):
+    _ = get_wandb()
 
     X_train, y_train, X_test, y_test = load_data(task.dataset_name)
 
