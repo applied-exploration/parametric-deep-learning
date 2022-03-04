@@ -3,11 +3,11 @@ from models.pytorch.mlp import MultiLayerPerceptron
 from data.data_loader import load_data
 import torch.nn.functional as F
 from embedding import (
-    embed_and_normalize_points,
+    embed_grid,
     embed_instructions,
     from_embeddings_to_instructions,
 )
-from utils.parse import parse_points, parse_program
+from utils.parse import parse_grid, parse_program
 from config import ProgramSynthesisTask, dataconfig_basic
 from utils.scoring import score_programs
 from render.visualize import visualize
@@ -17,17 +17,16 @@ dataconfig = dataconfig_basic
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
-    parse_input=parse_points,
+    parse_input=parse_grid,
     parse_program=parse_program,
-    embed_input=embed_and_normalize_points(dataconfig),
+    embed_input=embed_grid,
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
     model=LightningNeuralNetModel(
         MultiLayerPerceptron(
-            hidden_layers_ratio=[1.0, 2.0, 1.0, 0.5],
+            hidden_layers_ratio=[0.2],
             dropout_ratio=0.0,
-            probabilities=False,
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
         max_epochs=300,

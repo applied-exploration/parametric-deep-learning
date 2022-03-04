@@ -102,7 +102,9 @@ def generator(config: DataConfig, display_plot: bool = False):
                 )
 
         all_features.append(img)
-        features_collapsed: str = "".join([str(row) + "\n" for row in img])
+        features_collapsed: str = " ".join(
+            [" ".join([str(item) for item in row]) for row in img]
+        )
         labels_collapsed: str = write_definition(primitives, modifiers)
 
         if display_plot:

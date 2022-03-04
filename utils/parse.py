@@ -56,5 +56,5 @@ def parse_program(input: str) -> Program:
     return [parse_line(line) for line in input.splitlines()]
 
 
-def parse_points(input: str) -> list[Point]:
-    return [tuple(map(float, line.split(" "))) for line in input.splitlines()]
+def parse_grid(input: str) -> list[int]:
+    return [int(item) for item in input.split(" ")]

@@ -2,6 +2,8 @@ import torch
 from data.types import Point, DataConfig
 from typing import Callable
 
+def embed_grid(input: list[int]) -> torch.Tensor:
+    return torch.Tensor(input)
 
 def embed_and_normalize_points(dataconfig: DataConfig) -> Callable:
     def _embed_and_normalize_points(points: list[Point]):
