@@ -1,19 +1,17 @@
 import torch
 from torch import nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, random_split
 import pytorch_lightning as pl
 import math
-import numpy as np
 import torch
+from typing import Callable
 
 
 class MultiLayerPerceptron(pl.LightningModule):
     def __init__(
         self,
-        hidden_layers_ratio: list[float] = [2.0, 2.0],
-        dropout_ratio: float = 0.0,
-        loss_function=F.mse_loss,
+        hidden_layers_ratio: list[float],
+        dropout_ratio: float,
+        loss_function: Callable,
     ):
         super().__init__()
         self.hidden_layers_ratio = hidden_layers_ratio

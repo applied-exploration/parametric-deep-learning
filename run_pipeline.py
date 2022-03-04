@@ -1,5 +1,5 @@
 from models.neural import LightningNeuralNetModel
-from models.pytorch.mlp import MultiLayerPerceptron
+from models.pytorch.cnn import ConvolutionalModel
 from data.data_loader import load_data
 import torch.nn.functional as F
 from embedding import (
@@ -19,12 +19,12 @@ task = ProgramSynthesisTask(
     data_loader=load_data,
     parse_input=parse_grid,
     parse_program=parse_program,
-    embed_input=embed_grid,
+    embed_input=embed_grid(dataconfig),
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
     model=LightningNeuralNetModel(
-        MultiLayerPerceptron(
+        ConvolutionalModel(
             hidden_layers_ratio=[0.2],
             dropout_ratio=0.0,
             loss_function=compare_embedded_instructions_loss(dataconfig),
