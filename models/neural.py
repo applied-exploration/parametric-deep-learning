@@ -13,7 +13,7 @@ class LightningNeuralNetModel(Model):
 
     def fit(self, X: list[torch.Tensor], y: list[torch.Tensor]) -> None:
         dataloader = get_dataloader(X, y)
-        self.model.initialize_network(X[0].shape[0], y[0].shape[0])
+        self.model.initialize_network(X[0].shape, y[0].shape[0])
         self.trainer.fit(self.model, dataloader)
 
     def predict(self, X: list[torch.Tensor]) -> np.ndarray:

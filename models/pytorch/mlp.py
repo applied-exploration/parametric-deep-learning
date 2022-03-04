@@ -18,9 +18,9 @@ class MultiLayerPerceptron(pl.LightningModule):
         self.loss_function = loss_function
         self.dropout_ratio = dropout_ratio
 
-    def initialize_network(self, input_dim: int, output_dim: int) -> None:
+    def initialize_network(self, input_dim: tuple[int, int], output_dim: int) -> None:
         self.layers = nn.ModuleList()
-        current_dim = input_dim
+        current_dim = input_dim[0]
 
         for hdim in self.hidden_layers_ratio:
             hidden_layer_size = int(math.floor(current_dim * hdim))

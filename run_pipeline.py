@@ -25,8 +25,6 @@ task = ProgramSynthesisTask(
     scorer=score_programs,
     model=LightningNeuralNetModel(
         ConvolutionalModel(
-            hidden_layers_ratio=[0.2],
-            dropout_ratio=0.0,
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
         max_epochs=300,
