@@ -156,7 +156,7 @@ class Square(Primitive):
                 self.x + half_size,
                 self.y + half_size,
             ),
-            outline=(100, 100, 100),
+            outline=(1, 1, 1),
             width=1,
         )
         im = im.rotate(self.angle, center=(self.x, self.y), expand=False)
@@ -239,7 +239,7 @@ class Triangle(Primitive):
                 (self.x + half_size, self.y - half_size),
                 (self.x, self.y + half_size),
             ],
-            outline=(100, 100, 100),
+            outline=(1, 1, 1),
             width=1,
         )
         im = im.rotate(self.angle, center=(self.x, self.y), expand=False)

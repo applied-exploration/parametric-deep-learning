@@ -12,6 +12,7 @@ from config import ProgramSynthesisTask, dataconfig_basic
 from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
+import torch
 
 dataconfig = dataconfig_basic
 
@@ -27,7 +28,7 @@ task = ProgramSynthesisTask(
         ConvolutionalModel(
             loss_function=compare_embedded_instructions_loss(dataconfig),
         ),
-        max_epochs=300,
+        max_epochs=1,
     ),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
@@ -45,7 +46,7 @@ def run_pipeline(task: ProgramSynthesisTask):
     y_test = [task.parse_program(row) for row in y_test]
 
     task.model.fit(X_train, y_train)
-    output = task.model.predict(X_test)
+    output = task.model.predict(torch.stack(X_test, dim=0))
     output_programs = task.embedding_to_program(output)
 
     score = score_programs(y_test, output_programs)

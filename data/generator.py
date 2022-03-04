@@ -4,22 +4,18 @@ import random
 from tqdm import tqdm
 import numpy as np
 from data.types import (
-    Circle,
-    Square,
-    Triangle,
     Modifiers,
     Primitives,
     Translate,
-    Rotate,
     Constraint,
     DataConfig,
-    Program,
     Instruction,
 )
-from render.utils import display_features, display_program, display_both
+from render.utils import display_both
 from render.render import render
 
 from data.utils import write_definition, map_primitives, map_modifiers
+from PIL import Image, ImageDraw
 
 
 def random_dataset(config: DataConfig):
