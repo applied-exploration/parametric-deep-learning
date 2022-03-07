@@ -38,7 +38,7 @@ def embed_instructions(dataconfig: DataConfig) -> Callable:
 def __embed_instruction(
     dataconfig: DataConfig, instruction: Instruction
 ) -> torch.Tensor:
-    """Embed an instruction into a tensor.
+    """Embed one instruction into a tensor.
     1. The first n dimensions are one-hot encoded versions of the type.
     2. The next three dimensions are quantized continuous parameters (padded if not present).
     3. The (2 * num_primitives + 1) dimensions are indicies of nodes (parameters to constraint) one-hot encoded.

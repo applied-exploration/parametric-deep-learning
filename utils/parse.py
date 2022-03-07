@@ -8,7 +8,10 @@ from data.types import (
     Triangle,
     Square,
     Rotate,
+    DataConfig,
 )
+import numpy as np
+from typing import Callable
 
 
 def parse_program(input: str) -> Program:
@@ -56,5 +59,11 @@ def parse_program(input: str) -> Program:
     return [parse_line(line) for line in input.splitlines()]
 
 
-def parse_grid(input: str) -> list[int]:
-    return [int(item) for item in input.split(" ")]
+def parse_grid(dataconfig: DataConfig) -> Callable:
+    def _parse_grid(input: str) -> np.ndarray:
+        return np.reshape(
+            np.array([int(item) for item in input.split(" ")]),
+            (dataconfig.canvas_size, dataconfig.canvas_size),
+        )
+
+    return _parse_grid

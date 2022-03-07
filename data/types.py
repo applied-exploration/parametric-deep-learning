@@ -68,7 +68,7 @@ class Circle(Primitive):
         im = Image.new("RGB", (width, height), (0, 0, 0))
         draw = ImageDraw.Draw(im)
         half_size = self.r / 2
-        draw.rectangle(
+        draw.ellipse(
             (
                 self.x - half_size,
                 self.y - half_size,
@@ -300,7 +300,9 @@ class Translate(Modifier):
         self,
         primitives: list[Primitive],
     ) -> list[Primitive]:
-        assert self.index < len(primitives), "This primitve does not exist"
+        if self.index >= len(primitives):
+            print("This primitve does not exist")
+            return primitives
 
         obj = primitives[self.index]
         obj_pos = obj.get_position()
@@ -340,7 +342,9 @@ class Rotate(Modifier):
         self,
         primitives: list[Primitive],
     ) -> list[Primitive]:
-        assert self.index < len(primitives), "This primitve does not exist"
+        if self.index >= len(primitives):
+            print("This primitve does not exist")
+            return primitives
 
         obj = primitives[self.index]
         x, y = obj.get_position()
