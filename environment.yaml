@@ -16,6 +16,8 @@ dependencies:
   - pytest
   - certifi
   - tqdm
+  - python-dotenv
+  - wandb
   # - pip:
   #   - pre-commit
 prefix: /usr/local/anaconda3/envs/cad

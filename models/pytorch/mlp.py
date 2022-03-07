@@ -17,6 +17,7 @@ class MultiLayerPerceptron(pl.LightningModule):
         self.hidden_layers_ratio = hidden_layers_ratio
         self.loss_function = loss_function
         self.dropout_ratio = dropout_ratio
+        self.save_hyperparameters()
 
     def initialize_network(self, input_dim: tuple[int, int], output_dim: int) -> None:
         self.layers = nn.ModuleList()
@@ -52,6 +53,7 @@ class MultiLayerPerceptron(pl.LightningModule):
 
         loss = self.loss_function(x, y.float())
 
+        self.log("train/loss", loss)
         return loss
 
     def configure_optimizers(self):

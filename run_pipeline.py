@@ -1,5 +1,6 @@
 from models.neural import LightningNeuralNetModel
 from models.pytorch.cnn import ConvolutionalModel
+from models.pytorch.mlp import MultiLayerPerceptron
 from data.data_loader import load_data
 import torch.nn.functional as F
 from embedding import (
@@ -15,6 +16,15 @@ from loss.compare_embeddings import compare_embedded_instructions_loss
 import torch
 
 dataconfig = dataconfig_basic
+mlp_model = MultiLayerPerceptron(
+    hidden_layers_ratio=[1.0, 2.0],
+    dropout_ratio=0.1,
+    loss_function=compare_embedded_instructions_loss(dataconfig),
+)
+conv_model = ConvolutionalModel(
+    loss_function=compare_embedded_instructions_loss(dataconfig),
+)
+
 
 task = ProgramSynthesisTask(
     data_loader=load_data,
@@ -24,19 +34,13 @@ task = ProgramSynthesisTask(
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
-    model=LightningNeuralNetModel(
-        ConvolutionalModel(
-            loss_function=compare_embedded_instructions_loss(dataconfig),
-        ),
-        max_epochs=100,
-    ),
+    model=LightningNeuralNetModel(conv_model, max_epochs=100, logging=False),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
 )
 
 
 def run_pipeline(task: ProgramSynthesisTask):
-
     X_train, y_train, X_val, y_val, X_test, y_test = load_data(task.dataset_name)
 
     X_train = [task.embed_input(task.parse_input(row)) for row in X_train]
