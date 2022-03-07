@@ -48,6 +48,7 @@ task = ProgramSynthesisTask(
 
 def run_pipeline(task: ProgramSynthesisTask):
     _ = get_wandb()
+    embed_layers = True
 
     X_train, y_train, X_test, y_test = load_data(task.dataset_name)
 
@@ -56,6 +57,10 @@ def run_pipeline(task: ProgramSynthesisTask):
     X_test_without_embedding = [task.parse_input(row) for row in X_test]
     X_test = [task.embed_input(row) for row in X_test_without_embedding]
     y_test = [task.parse_program(row) for row in y_test]
+
+    # if embed_layers:
+    #     X_train =
+    #     X_test =
 
     task.model.fit(X_train, y_train)
     output = task.model.predict(torch.stack(X_test, dim=0))

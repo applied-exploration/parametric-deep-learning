@@ -25,6 +25,9 @@ class ConvolutionalModel(pl.LightningModule):
             self.embedding = nn.Embedding(embedding_size)
 
     def forward(self, x):
+
+        x = self.embedding()
+
         x = self.feature_extractor(x.unsqueeze(dim=1))
         x = x.view(x.size(0), -1)
         output = self.out(x)
