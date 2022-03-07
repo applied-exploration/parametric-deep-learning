@@ -15,7 +15,6 @@ from render.utils import display_both
 from render.render import render
 
 from data.utils import write_definition, map_primitives, map_modifiers
-from PIL import Image, ImageDraw
 
 
 def random_dataset(config: DataConfig):
@@ -64,12 +63,11 @@ def faces_dataset(config: DataConfig):
 
 
 def choose_structure(config: DataConfig):
-    if config.name == "random":
-        primitives, modifiers = random_dataset(config)
-    else:  # config.name == 'faces':
-        primitives, modifiers = faces_dataset(config)
+    if config.name == "faces":
+        return faces_dataset(config)
+    else:
+        return random_dataset(config)
 
-    return primitives, modifiers
 
 
 def generator(config: DataConfig, display_plot: bool = False):

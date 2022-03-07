@@ -87,7 +87,7 @@ def map_modifiers(config: DataConfig, modifiers_to_use: list) -> Modifiers:
     modifiers: Modifiers = []
 
     constraint_present = []
-    for i, modifier in enumerate(modifiers_to_use):
+    for modifier in modifiers_to_use:
         if isinstance(Constraint(0, 0, (0, 0)), modifier):
             if len(constraint_present) == 0:
                 constraint_present.append(
