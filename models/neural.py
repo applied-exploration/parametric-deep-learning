@@ -7,14 +7,21 @@ import torch
 
 
 class LightningNeuralNetModel(Model):
-    def __init__(self, model, max_epochs):
+    def __init__(self, model: pl.LightningModule, max_epochs: int, logging: bool):
         self.model = model
-        
-        wandb_logger = pl.loggers.WandbLogger(
-            project="Parametric-Deep-Learning", log_model=True
-        )
-        self.trainer = pl.Trainer(logger=wandb_logger, max_epochs=max_epochs, check_val_every_n_epoch=5)
 
+        if logging == True:
+            from wandb_setup import get_wandb
+            get_wandb()
+            
+        wandb_logger = (
+            pl.loggers.WandbLogger(project="Parametric-Deep-Learning", log_model=True)
+            if logging
+            else None
+        )
+        self.trainer = pl.Trainer(
+            logger=wandb_logger, max_epochs=max_epochs, check_val_every_n_epoch=5
+        )
 
     def fit(
         self,

@@ -14,7 +14,6 @@ from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
 import torch
-from wandb_setup import get_wandb
 
 dataconfig = dataconfig_basic
 mlp_model = MultiLayerPerceptron(
@@ -22,10 +21,8 @@ mlp_model = MultiLayerPerceptron(
     dropout_ratio=0.1,
     loss_function=compare_embedded_instructions_loss(dataconfig),
 )
-conv_model = (
-    ConvolutionalModel(
-        loss_function=compare_embedded_instructions_loss(dataconfig),
-    ),
+conv_model = ConvolutionalModel(
+    loss_function=compare_embedded_instructions_loss(dataconfig),
 )
 
 
@@ -37,15 +34,13 @@ task = ProgramSynthesisTask(
     embed_program=embed_instructions(dataconfig),
     embedding_to_program=from_embeddings_to_instructions(dataconfig),
     scorer=score_programs,
-    model=LightningNeuralNetModel(conv_model, max_epochs=2),
+    model=LightningNeuralNetModel(conv_model, max_epochs=100, logging=False),
     visualize=visualize(dataconfig),
     dataset_name=dataconfig.name,
 )
 
 
 def run_pipeline(task: ProgramSynthesisTask):
-    _ = get_wandb()
-
     X_train, y_train, X_val, y_val, X_test, y_test = load_data(task.dataset_name)
 
     X_train = [task.embed_input(task.parse_input(row)) for row in X_train]
