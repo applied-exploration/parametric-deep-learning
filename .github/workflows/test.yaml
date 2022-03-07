@@ -27,3 +27,8 @@ jobs:
         if: always()
         with:
           files: pytest.xml
+      - name: Write CML report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml-send-comment output/results.csv
