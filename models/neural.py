@@ -19,7 +19,7 @@ class LightningNeuralNetModel(Model):
         y_val: list[torch.Tensor],
     ) -> None:
         train_dataloader = get_dataloader(X_train, y_train)
-        val_dataloader = get_dataloader(X_val, y_val)
+        val_dataloader = get_dataloader(X_val, y_val, shuffle=False)
 
         self.model.initialize_network(X_train[0].shape, y_train[0].shape[0])
         self.trainer.fit(
