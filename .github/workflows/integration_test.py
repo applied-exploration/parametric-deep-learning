@@ -1,4 +1,4 @@
-name: run test and pipeline
+name: integration tests
 on: [push]
 jobs:
   run:
@@ -12,7 +12,7 @@ jobs:
           environment-file: environment.yaml
           python-version: 3.9
       - uses: iterative/setup-cml@v1
-      - name: Run pytest
+      - name: Run integration tests
         shell: bash -l {0}
         run: |
           python run_test_cases.py
