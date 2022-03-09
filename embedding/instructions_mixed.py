@@ -215,9 +215,7 @@ class MixedProgramStaticEmbeddings(ProgramStaticEmbeddings):
         )
 
 
-def embed_instruction(
-    dataconfig: DataConfig, instruction: Instruction
-) -> torch.Tensor:
+def embed_instruction(dataconfig: DataConfig, instruction: Instruction) -> torch.Tensor:
     """Embed one instruction into a tensor.
     1. The first n dimensions are one-hot encoded versions of the type.
     2. The next three dimensions are quantized continuous parameters (padded if not present).

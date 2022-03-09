@@ -27,7 +27,6 @@ dataconfig = DataConfig(
     num_primitives=2,
     random_primitives=False,
     num_modifiers=0,
-    instruction_embedding_size=16,
     primitive_types=[Square, Circle],
     modifier_types=[],
     instructions_map=all_instructions,
