@@ -20,11 +20,6 @@ from data.types import (
     DataConfig,
     Circle,
     Square,
-    Triangle,
-    Translate,
-    Rotate,
-    Constraint,
-    Instruction,
     all_instructions,
 )
 
@@ -61,7 +56,7 @@ task = ProgramSynthesisTask(
         max_epochs=100,
         logging=False,
     ),
-    visualize=visualize(dataconfig),
+    visualize=None,
     dataset_name=dataconfig.name,
 )
 

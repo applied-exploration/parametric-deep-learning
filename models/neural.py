@@ -1,5 +1,5 @@
 from __future__ import annotations
-from models.types import Model
+from .types import Model
 import numpy as np
 import pytorch_lightning as pl
 from .pytorch.dataset import get_dataloader
@@ -12,15 +12,19 @@ class LightningNeuralNetModel(Model):
 
         if logging == True:
             from wandb_setup import get_wandb
+
             get_wandb()
-            
+
         wandb_logger = (
             pl.loggers.WandbLogger(project="Parametric-Deep-Learning", log_model=True)
             if logging
             else None
         )
         self.trainer = pl.Trainer(
-            logger=wandb_logger, max_epochs=max_epochs, check_val_every_n_epoch=5
+            logger=wandb_logger,
+            max_epochs=max_epochs,
+            check_val_every_n_epoch=5,
+            enable_checkpointing=False,
         )
 
     def fit(
@@ -29,7 +33,7 @@ class LightningNeuralNetModel(Model):
         y_train: list[torch.Tensor],
         X_val: list[torch.Tensor],
         y_val: list[torch.Tensor],
-    ) -> None:
+    ) -> dict:
         train_dataloader = get_dataloader(X_train, y_train)
         val_dataloader = get_dataloader(X_val, y_val, shuffle=False)
 
@@ -39,6 +43,10 @@ class LightningNeuralNetModel(Model):
             train_dataloaders=train_dataloader,
             val_dataloaders=val_dataloader,
         )
+        return dict(
+            train_loss=self.trainer.logged_metrics["train_loss"].detach().item(),
+            val_loss=self.trainer.logged_metrics["val_loss_epoch"].detach().item(),
+        )
 
     def predict(self, X: list[torch.Tensor]) -> np.ndarray:
-        return self.model(X)
+        return self.model(torch.stack(X, dim=0))

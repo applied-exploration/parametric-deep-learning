@@ -13,7 +13,10 @@ from config import ProgramSynthesisTask, dataconfig_basic
 from utils.scoring import score_programs
 from render.visualize import visualize
 from loss.compare_embeddings import compare_embedded_instructions_loss
-import torch
+from pytorch_lightning import seed_everything
+import pandas as pd
+
+seed_everything(42, workers=True)
 
 dataconfig = dataconfig_basic
 mlp_model = MultiLayerPerceptron(
@@ -51,14 +54,16 @@ def run_pipeline(task: ProgramSynthesisTask):
     X_test = [task.embed_input(row) for row in X_test_without_embedding]
     y_test = [task.parse_program(row) for row in y_test]
 
-    task.model.fit(X_train, y_train, X_val, y_val)
-    output = task.model.predict(torch.stack(X_test, dim=0))
+    result = task.model.fit(X_train, y_train, X_val, y_val)
+    output = task.model.predict(X_test)
     output_programs = task.embedding_to_program(output)
 
     score = score_programs(y_test, output_programs)
     print(f"Score: {score}")
     if task.visualize is not None:
         task.visualize(X_test_without_embedding, output_programs)
+
+    pd.Series(result).to_csv("output/results.csv")
 
 
 if __name__ == "__main__":
