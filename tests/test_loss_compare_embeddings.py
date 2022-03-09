@@ -1,7 +1,6 @@
 from config import dataconfig_3
 from data.types import Circle, Translate, Constraint
-from embedding import embed_instructions, from_embeddings_to_instructions
-from loss.compare_embeddings_mixed import compare_embedded_instructions_loss
+from embedding.program_mixed import MixedProgramStaticEmbeddings
 
 instructions = [
     Circle(5.0, 51.0, 14.0, 1.0),
@@ -13,12 +12,13 @@ instructions = [
 
 
 dataconfig = dataconfig_3
+program_embedding = MixedProgramStaticEmbeddings(dataconfig)
 
 
 def test_embeddings_identical():
-    embedded_1 = embed_instructions(dataconfig)(instructions).unsqueeze(dim=0)
-    embedded_2 = embed_instructions(dataconfig)(instructions).unsqueeze(dim=0)
-    assert compare_embedded_instructions_loss(dataconfig)(embedded_1, embedded_2) < 4
+    embedded_1 = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
+    embedded_2 = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
+    assert program_embedding.loss(embedded_1, embedded_2) < 4
 
 
 def test_embeddings_slightly_different():
@@ -29,6 +29,6 @@ def test_embeddings_slightly_different():
         Translate(15.0, 25.0, index=1),
         Constraint(x=25.0, y=90.0, indicies=(0, 1)),
     ]
-    embedded_1 = embed_instructions(dataconfig)(instructions).unsqueeze(dim=0)
-    embedded_2 = embed_instructions(dataconfig)(instructions2).unsqueeze(dim=0)
-    assert compare_embedded_instructions_loss(dataconfig)(embedded_1, embedded_2) > 20
+    embedded_1 = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
+    embedded_2 = program_embedding.program_to_tensor(instructions2).unsqueeze(dim=0)
+    assert program_embedding.loss(embedded_1, embedded_2) > 20

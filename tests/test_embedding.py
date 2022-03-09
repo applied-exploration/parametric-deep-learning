@@ -1,7 +1,7 @@
 import numpy as np
 from config import dataconfig_3
 from data.types import Circle, Translate, Constraint
-from embedding import embed_instructions, from_embeddings_to_instructions
+from embedding.program_mixed import MixedProgramStaticEmbeddings
 
 instructions = [
     Circle(5.0, 51.0, 14.0, 0.0),
@@ -12,9 +12,10 @@ instructions = [
 ]
 
 dataconfig = dataconfig_3
+program_embedding = MixedProgramStaticEmbeddings(dataconfig)
 
 
 def test_embeddings():
-    embedded = embed_instructions(dataconfig)(instructions).unsqueeze(dim=0)
-    embedded_reversed = from_embeddings_to_instructions(dataconfig)(embedded)[0]
+    embedded = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
+    embedded_reversed = program_embedding.tensor_to_programs(embedded)[0]
     assert all([x == y for x, y in zip(embedded_reversed, instructions)])
