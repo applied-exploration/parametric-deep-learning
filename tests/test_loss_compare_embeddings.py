@@ -1,7 +1,7 @@
 from config import dataconfig_3
 from data.types import Circle, Translate, Constraint
 from embedding import embed_instructions, from_embeddings_to_instructions
-from loss.compare_embeddings import compare_embedded_instructions_loss
+from loss.compare_embeddings_mixed import compare_embedded_instructions_loss
 
 instructions = [
     Circle(5.0, 51.0, 14.0, 1.0),

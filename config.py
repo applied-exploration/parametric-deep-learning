@@ -13,6 +13,7 @@ from data.types import (
     all_instructions,
 )
 from models.types import Model
+from embedding.types import ProgramStaticEmbeddings
 
 
 @dataclass(frozen=True)
@@ -21,8 +22,7 @@ class ProgramSynthesisTask:
     parse_input: Callable
     parse_program: Callable
     embed_input: Callable
-    embed_program: Callable
-    embedding_to_program: Callable
+    program_embedding: ProgramStaticEmbeddings
     scorer: Callable
     model: Model
     visualize: Optional[Callable]

@@ -11,7 +11,7 @@ from utils.parse import parse_grid, parse_program
 from config import ProgramSynthesisTask
 from utils.scoring import score_programs
 from render.visualize import visualize
-from loss.compare_embeddings import compare_embedded_instructions_loss
+from loss.compare_embeddings_mixed import compare_embedded_instructions_loss
 from run_pipeline import run_pipeline
 from data.generator import generator
 from dataclasses import dataclass
