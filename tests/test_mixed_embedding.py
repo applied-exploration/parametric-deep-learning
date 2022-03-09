@@ -15,7 +15,7 @@ dataconfig = dataconfig_3
 program_embedding = MixedProgramStaticEmbeddings(dataconfig)
 
 
-def test_embeddings():
+def test_mixed_embeddings():
     embedded = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
     embedded_reversed = program_embedding.tensor_to_programs(embedded)[0]
     assert all([x == y for x, y in zip(embedded_reversed, instructions)])

@@ -15,13 +15,13 @@ dataconfig = dataconfig_3
 program_embedding = MixedProgramStaticEmbeddings(dataconfig)
 
 
-def test_embeddings_identical():
+def test_mixed_embeddings_identical():
     embedded_1 = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
     embedded_2 = program_embedding.program_to_tensor(instructions).unsqueeze(dim=0)
     assert program_embedding.loss(embedded_1, embedded_2) < 4
 
 
-def test_embeddings_slightly_different():
+def test_mixed_embeddings_slightly_different():
     instructions2 = [
         Circle(50.0, 51.0, 14.0, 1.0),
         Circle(6.0, 51.0, 14.0, 1.0),

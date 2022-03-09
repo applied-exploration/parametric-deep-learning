@@ -376,8 +376,8 @@ class Rotate(Modifier):
 
 @dataclass(frozen=True)
 class Constraint(Modifier):
-    x: Optional[float]
-    y: Optional[float]
+    x: float
+    y: float
     indicies: tuple[int, int]
     name: str = "CONSTRAINT"
 

@@ -3,7 +3,7 @@ from models.pytorch.cnn import ConvolutionalModel
 from models.pytorch.mlp import MultiLayerPerceptron
 from data.data_loader import load_data
 from embedding import embed_grid
-from embedding.program_mixed import MixedProgramStaticEmbeddings
+from embedding.program_discretized import DiscretizedProgramStaticEmbeddings
 from utils.parse import parse_grid, parse_program
 from config import ProgramSynthesisTask, dataconfig_basic
 from utils.scoring import score_programs
@@ -14,7 +14,7 @@ import pandas as pd
 seed_everything(42, workers=True)
 
 dataconfig = dataconfig_basic
-program_embedding = MixedProgramStaticEmbeddings(dataconfig)
+program_embedding = DiscretizedProgramStaticEmbeddings(dataconfig)
 
 mlp_model = MultiLayerPerceptron(
     hidden_layers_ratio=[1.0, 2.0],
