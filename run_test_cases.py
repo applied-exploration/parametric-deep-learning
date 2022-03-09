@@ -51,7 +51,7 @@ task = ProgramSynthesisTask(
     scorer=score_programs,
     model=LightningNeuralNetModel(
         ConvolutionalModel(
-            loss_function=compare_embedded_instructions_loss(dataconfig)
+            loss_function=compare_embedded_instructions_loss(dataconfig), dropout_p=0.2
         ),
         max_epochs=100,
         logging=False,

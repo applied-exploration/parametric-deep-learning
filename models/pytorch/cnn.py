@@ -1,5 +1,5 @@
 import torch
-from torch import nn
+from torch import dropout_, nn
 import pytorch_lightning as pl
 import numpy as np
 import torch
@@ -9,12 +9,13 @@ import operator
 
 
 class ConvolutionalModel(pl.LightningModule):
-    def __init__(self, loss_function: Callable, learning_rate=2e-4):
+    def __init__(self, loss_function: Callable, dropout_p: float, learning_rate=2e-4):
         super().__init__()
 
         self.save_hyperparameters()
         self.learning_rate = learning_rate
         self.loss_function = loss_function
+        self.dropout_p = dropout_p
 
     def forward(self, x):
         x = self.feature_extractor(x.unsqueeze(dim=1))
@@ -68,4 +69,8 @@ class ConvolutionalModel(pl.LightningModule):
             ),
         )
 
-        self.out = nn.Linear(num_features_before_fcnn, output_dim)
+        self.out = nn.Sequential(
+            nn.Linear(num_features_before_fcnn, 512),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(512, output_dim),
+        )

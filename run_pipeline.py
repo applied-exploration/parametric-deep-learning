@@ -26,6 +26,7 @@ mlp_model = MultiLayerPerceptron(
 )
 conv_model = ConvolutionalModel(
     loss_function=compare_embedded_instructions_loss(dataconfig),
+    dropout_p=0.2,
 )
 
 
