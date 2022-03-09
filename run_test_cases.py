@@ -2,7 +2,7 @@ from models.neural import LightningNeuralNetModel
 from models.pytorch.cnn import ConvolutionalModel
 from data.data_loader import load_data
 from embedding import embed_grid
-from embedding.instructions_mixed import MixedProgramStaticEmbeddings
+from embedding.program_mixed import MixedProgramStaticEmbeddings
 from utils.parse import parse_grid, parse_program
 from config import ProgramSynthesisTask
 from utils.scoring import score_programs
