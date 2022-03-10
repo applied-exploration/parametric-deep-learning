@@ -70,7 +70,7 @@ class ConvolutionalModel(pl.LightningModule):
         )
 
         self.out = nn.Sequential(
-            nn.Linear(num_features_before_fcnn, 512),
+            nn.Linear(num_features_before_fcnn, 256),
             nn.Dropout(self.dropout_p),
-            nn.Linear(512, output_dim),
+            nn.Linear(256, output_dim),
         )

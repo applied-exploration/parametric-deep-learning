@@ -69,7 +69,6 @@ def choose_structure(config: DataConfig):
         return random_dataset(config)
 
 
-
 def generator(config: DataConfig, display_plot: bool = False):
     column_names = ["features", "label"]
     data, all_features, all_programs = [], [], []

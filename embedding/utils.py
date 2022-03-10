@@ -7,7 +7,11 @@ def quantize(input: float, n: int) -> torch.Tensor:
 
 
 def to_onehot(x: int, n_classes: int) -> torch.Tensor:
-    return torch.nn.functional.one_hot(torch.Tensor([x]).long(), n_classes).squeeze()
+    return (
+        torch.nn.functional.one_hot(torch.Tensor([x]).long(), n_classes)
+        .squeeze()
+        .float()
+    )
 
 
 def softmax(x: np.ndarray) -> np.ndarray:

@@ -376,8 +376,8 @@ class Rotate(Modifier):
 
 @dataclass(frozen=True)
 class Constraint(Modifier):
-    x: Optional[float]
-    y: Optional[float]
+    x: float
+    y: float
     indicies: tuple[int, int]
     name: str = "CONSTRAINT"
 
@@ -456,7 +456,6 @@ class DataConfig:
     num_primitives: int
     random_primitives: bool
     num_modifiers: int
-    instruction_embedding_size: int
     primitive_types: list[Type[Primitive]]
     modifier_types: list[Type[Modifier]]
     instructions_map: dict

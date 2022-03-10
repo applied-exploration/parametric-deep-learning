@@ -5,16 +5,15 @@ channels:
   - cadquery
 dependencies:
   - python=3.9
+  - pyright
   - ipykernel
-  - ca-certificates
-  - openssl
+  - black
   - matplotlib
   - pandas
   - numpy
   - pytorch
   - pytorch-lightning
   - pytest
-  - certifi
   - tqdm
   - python-dotenv
   - wandb

@@ -49,9 +49,9 @@ class MultiLayerPerceptron(pl.LightningModule):
 
         loss = 0
         for layer in self.layers:
-            x = layer(x.float())
+            x = layer(x)
 
-        loss = self.loss_function(x, y.float())
+        loss = self.loss_function(x, y)
 
         self.log("train/loss", loss)
         return loss
